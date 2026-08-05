@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from './core/auth.service';
 import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
 
 @Component({
@@ -22,6 +23,9 @@ import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
           <a routerLink="/blogs" routerLinkActive="active">Blogs</a>
           <a routerLink="/interview-experiences" routerLinkActive="active">Experiences</a>
           <a routerLink="/interview-questions" routerLinkActive="active">Questions</a>
+          <a *ngIf="auth.isAuthenticated() && auth.isAdmin()" routerLink="/admin" routerLinkActive="active">Admin</a>
+          <button *ngIf="auth.isAuthenticated()" type="button" class="logout-btn" (click)="logout()">Logout</button>
+          <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/login" routerLinkActive="active">Admin Login</a>
         </nav>
       </header>
 
@@ -64,7 +68,7 @@ import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
       width: 2.75rem;
       height: 2.75rem;
       border-radius: 0.9rem;
-      background: linear-gradient(135deg, #e11d48, #fb7185);
+      background: linear-gradient(135deg, #38bdf8, #0f172a);
       font-weight: 800;
     }
 
@@ -82,17 +86,24 @@ import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
+      align-items: center;
     }
 
-    .nav a {
+    .nav a,
+    .logout-btn {
       padding: 0.65rem 0.95rem;
       border-radius: 999px;
       color: rgba(255, 255, 255, 0.82);
       transition: background 0.2s ease, color 0.2s ease;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
     }
 
     .nav a.active,
-    .nav a:hover {
+    .nav a:hover,
+    .logout-btn:hover {
       background: rgba(255, 255, 255, 0.1);
       color: #fff;
     }
@@ -115,4 +126,12 @@ import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
     }
   `]
 })
-export class AppComponent {}
+export class AppComponent {
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigateByUrl('/');
+  }
+}

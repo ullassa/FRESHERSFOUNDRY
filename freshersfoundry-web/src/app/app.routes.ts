@@ -8,6 +8,7 @@ import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { ApplyCreatorComponent } from './features/auth/apply-creator.component';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard.component';
+import { roleGuard } from './core/role.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -18,6 +19,6 @@ export const routes: Routes = [
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
   { path: 'auth/apply-creator', component: ApplyCreatorComponent },
-  { path: 'admin', component: AdminDashboardComponent },
+  { path: 'admin', component: AdminDashboardComponent, canActivate: [roleGuard] },
   { path: '**', redirectTo: '' }
 ];

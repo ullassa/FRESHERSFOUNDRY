@@ -10,7 +10,7 @@ import { Component, Input } from '@angular/core';
   `,
   styles: [`
     .card {
-      background: #fff;
+      background: linear-gradient(135deg, #ffffff, #f7fbff);
       border: 1px solid var(--ff-border);
       border-radius: 1.25rem;
       box-shadow: var(--ff-shadow);

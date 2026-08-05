@@ -1,11 +1,11 @@
 :root {
-  --ff-bg: #fafafa;
+  --ff-bg: #f5faff;
   --ff-surface: #ffffff;
   --ff-surface-strong: #0f172a;
   --ff-text: #0f172a;
-  --ff-muted: #64748b;
-  --ff-border: #e2e8f0;
-  --ff-cta: #e11d48;
+  --ff-muted: #5b6b7f;
+  --ff-border: #d7e9f7;
+  --ff-cta: #38bdf8;
   --ff-amber: #d97706;
   --ff-success: #059669;
   --ff-warning: #d97706;
@@ -20,7 +20,7 @@ html, body {
   margin: 0;
   min-height: 100%;
   background:
-    radial-gradient(circle at top left, rgba(225, 29, 72, 0.06), transparent 28%),
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 28%),
     radial-gradient(circle at top right, rgba(15, 23, 42, 0.04), transparent 24%),
     var(--ff-bg);
   color: var(--ff-text);
