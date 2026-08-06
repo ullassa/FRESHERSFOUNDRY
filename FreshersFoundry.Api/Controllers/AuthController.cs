@@ -96,13 +96,44 @@ public class AuthController : ControllerBase
 
     [HttpPost("apply-creator")]
     [Authorize]
-    public IActionResult ApplyCreator() => Ok(new { message = "Creator application endpoint scaffolded." });
+    public async Task<IActionResult> ApplyCreator()
+    {
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
+
+        var user = await context.Users.FindAsync(Guid.Parse(userId));
+        if (user is null) return NotFound();
+
+        user.CreatorStatus = CreatorStatus.Pending;
+        await context.SaveChangesAsync();
+
+        return Ok(new { message = "Creator application submitted." });
+    }
 
     [HttpPut("creator-application/{userId:guid}/approve")]
     [Authorize(Roles = "Admin")]
-    public IActionResult ApproveCreatorApplication(Guid userId) => Ok(new { userId, status = "approved" });
+    public async Task<IActionResult> ApproveCreatorApplication(Guid userId)
+    {
+        var user = await context.Users.FindAsync(userId);
+        if (user is null) return NotFound();
+
+        user.CreatorStatus = CreatorStatus.Approved;
+        user.Role = UserRole.Creator;
+        await context.SaveChangesAsync();
+
+        return Ok(new { userId, status = "approved" });
+    }
 
     [HttpPut("creator-application/{userId:guid}/reject")]
     [Authorize(Roles = "Admin")]
-    public IActionResult RejectCreatorApplication(Guid userId) => Ok(new { userId, status = "rejected" });
+    public async Task<IActionResult> RejectCreatorApplication(Guid userId)
+    {
+        var user = await context.Users.FindAsync(userId);
+        if (user is null) return NotFound();
+
+        user.CreatorStatus = CreatorStatus.Rejected;
+        await context.SaveChangesAsync();
+
+        return Ok(new { userId, status = "rejected" });
+    }
 }

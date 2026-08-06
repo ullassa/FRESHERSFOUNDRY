@@ -15,7 +15,6 @@ public static class MvpSeedCatalog
 
     public static IReadOnlyList<Job> Jobs =>
     [
-        new Job { Title = "Graduate Software Engineer", CompanyName = "Tata Consultancy Services", Location = "Bengaluru", JobType = JobType.FullTime, SkillTags = "Java,SQL,Spring", Description = "Entry-level role for fresh graduates.", ApplyLink = "https://example.com", PostedByRole = UserRole.Admin, Status = ContentStatus.Approved },
         new Job { Title = "Software Engineer Intern", CompanyName = "Infosys", Location = "Pune", JobType = JobType.Internship, SkillTags = "C#,ASP.NET,SQL", Description = "6-month internship for students.", ApplyLink = "https://example.com", PostedByRole = UserRole.Admin, Status = ContentStatus.Approved },
         new Job { Title = "Frontend Developer", CompanyName = "Wipro", Location = "Remote", JobType = JobType.Contract, SkillTags = "Angular,TypeScript,CSS", Description = "Contract role for frontend work.", ApplyLink = "https://example.com", PostedByRole = UserRole.Admin, Status = ContentStatus.Approved }
     ];

@@ -82,8 +82,14 @@ public class Job
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Title { get; set; } = string.Empty;
     public string CompanyName { get; set; } = string.Empty;
+    // optional URL for a company logo
+    public string? CompanyLogoUrl { get; set; }
     public string Location { get; set; } = string.Empty;
     public JobType JobType { get; set; }
+    // experience level text (e.g. "0-1 years")
+    public string? ExperienceLevel { get; set; }
+    // salary/stipend range text (e.g. "4-6 LPA")
+    public string? SalaryRange { get; set; }
     public string SkillTags { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string ApplyLink { get; set; } = string.Empty;
@@ -127,9 +133,13 @@ public class InterviewQuestion
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Category { get; set; } = string.Empty;
+    // optional sub-topic for finer categorization
+    public string? SubTopic { get; set; }
     public string Question { get; set; } = string.Empty;
     public string Answer { get; set; } = string.Empty;
     public DifficultyLevel Difficulty { get; set; }
+    // optional code snippet to accompany the question
+    public string? CodeSnippet { get; set; }
     public Guid CreatedById { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

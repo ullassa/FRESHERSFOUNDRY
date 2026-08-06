@@ -1,34 +1,35 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/auth.service';
+import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, AdBannerComponent],
   template: `
     <div class="shell">
-      @if (!isAdminRoute()) {
-        <header class="topbar">
-          <div class="brand">
-            <span class="brand-mark">F</span>
-            <div>
-              <div class="brand-title">FreshersFoundry</div>
-              <div class="brand-subtitle">Verified interview stories, jobs, and prep</div>
-            </div>
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">F</span>
+          <div>
+            <div class="brand-title">FreshersFoundry</div>
+            <div class="brand-subtitle">Verified interview stories, jobs, and prep</div>
           </div>
-          <nav class="nav">
-            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-            <a routerLink="/jobs" routerLinkActive="active">Jobs</a>
-            <a routerLink="/blogs" routerLinkActive="active">Blogs</a>
-            <a routerLink="/interview-experiences" routerLinkActive="active">Experiences</a>
-            <a routerLink="/interview-questions" routerLinkActive="active">Questions</a>
-            <a *ngIf="auth.isAuthenticated() && auth.isAdmin()" routerLink="/admin" routerLinkActive="active">Admin</a>
-            <button *ngIf="auth.isAuthenticated()" type="button" class="logout-btn" (click)="logout()">Logout</button>
-            <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/login" routerLinkActive="active">Admin Login</a>
-          </nav>
-        </header>
-      }
+        </div>
+        <nav class="nav">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+          <a routerLink="/jobs" routerLinkActive="active">Jobs</a>
+          <a routerLink="/blogs" routerLinkActive="active">Blogs</a>
+          <a routerLink="/interview-experiences" routerLinkActive="active">Experiences</a>
+          <a routerLink="/interview-questions" routerLinkActive="active">Questions</a>
+          <a *ngIf="auth.isAuthenticated() && auth.isAdmin()" routerLink="/admin" routerLinkActive="active">Admin</a>
+          <button *ngIf="auth.isAuthenticated()" type="button" class="logout-btn" (click)="logout()">Logout</button>
+          <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/login" routerLinkActive="active">Admin Login</a>
+        </nav>
+      </header>
+
+      <app-ad-banner placement="HomeTop"></app-ad-banner>
 
       <main class="page-shell">
         <router-outlet></router-outlet>
@@ -128,10 +129,6 @@ import { AuthService } from './core/auth.service';
 export class AppComponent {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-
-  isAdminRoute(): boolean {
-    return this.router.url.startsWith('/admin');
-  }
 
   logout(): void {
     this.auth.logout();

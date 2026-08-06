@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../core/auth.service';
 import { CardComponent } from '../../shared/components/card.component';
+import { RouterLink } from '@angular/router';
 import {
   AdminDashboardResponse,
   AdminDashboardService,
@@ -14,7 +15,7 @@ import {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, CardComponent],
+  imports: [CommonModule, CardComponent, RouterLink],
   template: `
     <div class="admin-shell" [class.collapsed]="sidebarCollapsed()">
       <aside class="sidebar">
@@ -168,15 +169,19 @@ import {
             </div>
 
             <div class="action-grid">
-              <button
-                type="button"
-                class="action-button"
-                *ngFor="let action of data.quickActions; trackBy: trackByQuickAction"
-                (click)="scrollTo(action.sectionId)"
-                [class.primary]="action.variant === 'primary'"
-              >
-                {{ action.label }}
-              </button>
+                    <a class="action-item" routerLink="/admin/post-job">Post a job</a>
+                    <a class="action-item" routerLink="/admin/post-question">Post a question</a>
+                    <a class="action-item" routerLink="/admin/pending-approvals">Pending approvals</a>
+                    <a class="action-item" routerLink="/admin/ads">Ad Manager</a>
+                    <button
+                      type="button"
+                      class="action-button"
+                      *ngFor="let action of data.quickActions; trackBy: trackByQuickAction"
+                      (click)="scrollTo(action.sectionId)"
+                      [class.primary]="action.variant === 'primary'"
+                    >
+                      {{ action.label }}
+                    </button>
             </div>
           </app-card>
         </section>
