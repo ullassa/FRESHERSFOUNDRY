@@ -16,7 +16,6 @@ public class AppDbContext : DbContext
     public DbSet<InterviewQuestion> InterviewQuestions => Set<InterviewQuestion>();
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<Bookmark> Bookmarks => Set<Bookmark>();
-    public DbSet<AdSlot> AdSlots => Set<AdSlot>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

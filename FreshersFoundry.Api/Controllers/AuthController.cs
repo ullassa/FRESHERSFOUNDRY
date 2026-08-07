@@ -37,8 +37,7 @@ public class AuthController : ControllerBase
         {
             FullName = request.FullName.Trim(),
             Email = email,
-            Role = UserRole.User,
-            CreatorStatus = CreatorStatus.None
+            Role = UserRole.User
         };
 
         user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
@@ -94,46 +93,4 @@ public class AuthController : ControllerBase
         return Ok(new AuthResponse(user.Id, user.FullName, user.Email, user.Role.ToString(), token));
     }
 
-    [HttpPost("apply-creator")]
-    [Authorize]
-    public async Task<IActionResult> ApplyCreator()
-    {
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
-
-        var user = await context.Users.FindAsync(Guid.Parse(userId));
-        if (user is null) return NotFound();
-
-        user.CreatorStatus = CreatorStatus.Pending;
-        await context.SaveChangesAsync();
-
-        return Ok(new { message = "Creator application submitted." });
-    }
-
-    [HttpPut("creator-application/{userId:guid}/approve")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> ApproveCreatorApplication(Guid userId)
-    {
-        var user = await context.Users.FindAsync(userId);
-        if (user is null) return NotFound();
-
-        user.CreatorStatus = CreatorStatus.Approved;
-        user.Role = UserRole.Creator;
-        await context.SaveChangesAsync();
-
-        return Ok(new { userId, status = "approved" });
-    }
-
-    [HttpPut("creator-application/{userId:guid}/reject")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> RejectCreatorApplication(Guid userId)
-    {
-        var user = await context.Users.FindAsync(userId);
-        if (user is null) return NotFound();
-
-        user.CreatorStatus = CreatorStatus.Rejected;
-        await context.SaveChangesAsync();
-
-        return Ok(new { userId, status = "rejected" });
-    }
 }

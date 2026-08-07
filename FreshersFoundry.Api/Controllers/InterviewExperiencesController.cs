@@ -39,7 +39,7 @@ public class InterviewExperiencesController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] InterviewExperience request)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -60,7 +60,7 @@ public class InterviewExperiencesController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(Guid id, [FromBody] InterviewExperience update)
     {
         var item = await context.InterviewExperiences.FindAsync(id);
@@ -79,7 +79,7 @@ public class InterviewExperiencesController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var item = await context.InterviewExperiences.FindAsync(id);

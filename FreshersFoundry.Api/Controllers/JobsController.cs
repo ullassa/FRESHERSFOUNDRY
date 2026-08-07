@@ -19,6 +19,7 @@ public class JobsController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll([FromQuery] string? skill, [FromQuery] string? location, [FromQuery] string? type)
     {
         var query = context.Jobs.Where(job => job.Status == ContentStatus.Approved).AsQueryable();
@@ -53,6 +54,7 @@ public class JobsController : ControllerBase
                 job.SkillTags,
                 job.Description,
                 job.ApplyLink,
+                job.ExpiryDate,
                 job.CreatedAt
             })
             .ToListAsync();
@@ -61,9 +63,10 @@ public class JobsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var job = await context.Jobs.FirstOrDefaultAsync(candidate => candidate.Id == id);
+        var job = await context.Jobs.FirstOrDefaultAsync(candidate => candidate.Id == id && candidate.Status == ContentStatus.Approved);
         if (job is null)
         {
             return NotFound(new { message = "Job not found." });
@@ -82,6 +85,7 @@ public class JobsController : ControllerBase
             job.SkillTags,
             job.Description,
             job.ApplyLink,
+            job.ExpiryDate,
             job.PostedById,
             job.PostedByRole,
             job.Status,
@@ -90,9 +94,14 @@ public class JobsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateJobRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -117,15 +126,17 @@ public class JobsController : ControllerBase
             SkillTags = request.SkillTags.Trim(),
             Description = request.Description.Trim(),
             ApplyLink = request.ApplyLink.Trim(),
+            ExpiryDate = request.ExpiryDate,
             PostedById = user.Id,
             PostedByRole = user.Role,
-            Status = user.Role == UserRole.Admin ? ContentStatus.Approved : ContentStatus.Pending
+            Status = ContentStatus.Approved,
+            CreatedAt = DateTime.UtcNow
         };
 
         context.Jobs.Add(job);
         await context.SaveChangesAsync();
 
-        return Ok(new JobCreateResponse(
+        var response = new JobCreateResponse(
             job.Id,
             job.Title,
             job.CompanyName,
@@ -137,24 +148,51 @@ public class JobsController : ControllerBase
             job.SkillTags,
             job.Description,
             job.ApplyLink,
+            job.ExpiryDate,
             job.PostedById,
             job.Status.ToString(),
-            job.CreatedAt));
+            job.CreatedAt);
+
+        return CreatedAtAction(nameof(GetById), new { id = job.Id }, response);
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public IActionResult Update(Guid id) => Ok(new { id, message = "Job update endpoint scaffolded." });
 
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public IActionResult Delete(Guid id) => Ok(new { id, message = "Job delete endpoint scaffolded." });
 
     [HttpPut("{id:guid}/approve")]
     [Authorize(Roles = "Admin")]
-    public IActionResult Approve(Guid id) => Ok(new { id, status = "approved" });
+    public async Task<IActionResult> Approve(Guid id)
+    {
+        var job = await context.Jobs.FindAsync(id);
+        if (job is null)
+        {
+            return NotFound(new { message = "Job not found." });
+        }
+
+        job.Status = ContentStatus.Approved;
+        await context.SaveChangesAsync();
+
+        return Ok(new { id, status = "approved" });
+    }
 
     [HttpPut("{id:guid}/reject")]
     [Authorize(Roles = "Admin")]
-    public IActionResult Reject(Guid id) => Ok(new { id, status = "rejected" });
+    public async Task<IActionResult> Reject(Guid id)
+    {
+        var job = await context.Jobs.FindAsync(id);
+        if (job is null)
+        {
+            return NotFound(new { message = "Job not found." });
+        }
+
+        job.Status = ContentStatus.Rejected;
+        await context.SaveChangesAsync();
+
+        return Ok(new { id, status = "rejected" });
+    }
 }

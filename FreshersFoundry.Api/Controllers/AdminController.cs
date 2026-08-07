@@ -42,62 +42,82 @@ public class AdminController : ControllerBase
         return Ok(new { pendingExperiences, pendingBlogs, pendingJobs });
     }
 
-    [HttpGet("pending-creators")]
-    public async Task<IActionResult> PendingCreators()
+    [HttpGet("dashboard")]
+    public async Task<IActionResult> Dashboard()
     {
-        var creators = await context.Users
-            .Where(u => u.CreatorStatus == CreatorStatus.Pending)
-            .ToListAsync();
+        var totalUsers = await context.Users.CountAsync();
+        var activeJobs = await context.Jobs.CountAsync(j => j.Status == ContentStatus.Approved);
+        var pendingJobs = await context.Jobs.CountAsync(j => j.Status == ContentStatus.Pending);
+        var pendingExperiences = await context.InterviewExperiences.CountAsync(e => e.Status == ContentStatus.Pending);
+        var totalQuestions = await context.InterviewQuestions.CountAsync();
+        var pendingBlogs = await context.Blogs.CountAsync(b => b.Status == ContentStatus.Pending);
 
-        return Ok(new { creators });
+        var metrics = new[]
+        {
+            new { key = "users", label = "Total users", value = totalUsers, todayChange = "+1%", icon = "users", sectionId = "users" },
+            new { key = "activeJobs", label = "Active jobs", value = activeJobs, todayChange = "+2%", icon = "jobs", sectionId = "jobs" },
+            new { key = "pendingJobs", label = "Pending jobs", value = pendingJobs, todayChange = "--", icon = "pending", sectionId = "jobs" },
+            new { key = "pendingExperiences", label = "Pending experiences", value = pendingExperiences, todayChange = "--", icon = "experiences", sectionId = "interview-experiences" },
+            new { key = "questions", label = "Total questions", value = totalQuestions, todayChange = "+3%", icon = "questions", sectionId = "interview-questions" },
+            new { key = "pendingBlogs", label = "Pending blogs", value = pendingBlogs, todayChange = "--", icon = "blogs", sectionId = "blogs" }
+        };
+
+        var quickActions = new[]
+        {
+            new { label = "Post a new job", sectionId = "jobs", variant = "primary" },
+            new { label = "Review pending content", sectionId = "interview-experiences", variant = "secondary" }
+        };
+
+        var recentActivity = new[]
+        {
+            new
+            {
+                key = "jobs",
+                title = "Recent job approvals",
+                items = new object[] { },
+                emptyState = "No recent job approvals yet."
+            },
+            new
+            {
+                key = "questions",
+                title = "Recent question activity",
+                items = new object[] { },
+                emptyState = "No question activity yet."
+            },
+            new
+            {
+                key = "experiences",
+                title = "Recent experience updates",
+                items = new object[] { },
+                emptyState = "No experience updates yet."
+            }
+        };
+
+        return Ok(new
+        {
+            metrics,
+            quickActions,
+            recentActivity
+        });
     }
 
     [HttpGet("dashboard-stats")]
     public async Task<IActionResult> DashboardStats()
     {
         var totalUsers = await context.Users.CountAsync();
-        var pendingContent = await context.InterviewExperiences.CountAsync(e => e.Status == ContentStatus.Pending)
-                            + await context.Blogs.CountAsync(b => b.Status == ContentStatus.Pending)
-                            + await context.Jobs.CountAsync(j => j.Status == ContentStatus.Pending);
-        var activeAds = await context.AdSlots.CountAsync(a => a.IsActive && a.StartDate <= DateTime.UtcNow && a.EndDate >= DateTime.UtcNow);
+        var activeJobs = await context.Jobs.CountAsync(j => j.Status == ContentStatus.Approved);
+        var pendingJobs = await context.Jobs.CountAsync(j => j.Status == ContentStatus.Pending);
+        var pendingExperiences = await context.InterviewExperiences.CountAsync(e => e.Status == ContentStatus.Pending);
+        var totalQuestions = await context.InterviewQuestions.CountAsync();
 
-        return Ok(new { totalUsers, pendingContent, activeAds });
+        return Ok(new
+        {
+            totalUsers,
+            activeJobs,
+            pendingJobs,
+            pendingExperiences,
+            totalQuestions
+        });
     }
 
-    [HttpGet("ads")]
-    public async Task<IActionResult> GetAds()
-    {
-        var ads = await context.AdSlots.OrderByDescending(a => a.StartDate).ToListAsync();
-        return Ok(new { ads });
-    }
-
-    [HttpPost("ads")]
-    public async Task<IActionResult> CreateAd([FromBody] AdSlot ad)
-    {
-        ad.Id = Guid.NewGuid();
-        ad.CreatedAt = DateTime.UtcNow;
-        context.AdSlots.Add(ad);
-        await context.SaveChangesAsync();
-        return Ok(ad);
-    }
-
-    [HttpPut("ads/{id:guid}/toggle")]
-    public async Task<IActionResult> ToggleAd(Guid id)
-    {
-        var ad = await context.AdSlots.FindAsync(id);
-        if (ad is null) return NotFound();
-        ad.IsActive = !ad.IsActive;
-        await context.SaveChangesAsync();
-        return Ok(ad);
-    }
-
-    [HttpDelete("ads/{id:guid}")]
-    public async Task<IActionResult> DeleteAd(Guid id)
-    {
-        var ad = await context.AdSlots.FindAsync(id);
-        if (ad is null) return NotFound();
-        context.AdSlots.Remove(ad);
-        await context.SaveChangesAsync();
-        return Ok(new { id });
-    }
 }

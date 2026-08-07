@@ -51,12 +51,24 @@ export interface AdminSearchResponse {
   results: AdminSearchResult[];
 }
 
+export interface AdminDashboardStats {
+  totalUsers: number;
+  activeJobs: number;
+  pendingJobs: number;
+  pendingExperiences: number;
+  totalQuestions: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminDashboardService {
   private readonly http = inject(HttpClient);
 
   getDashboard(): Observable<AdminDashboardResponse> {
     return this.http.get<AdminDashboardResponse>(`${environment.apiBaseUrl}/admin/dashboard`);
+  }
+
+  getDashboardStats(): Observable<AdminDashboardStats> {
+    return this.http.get<AdminDashboardStats>(`${environment.apiBaseUrl}/admin/dashboard-stats`);
   }
 
   search(query: string): Observable<AdminSearchResponse> {

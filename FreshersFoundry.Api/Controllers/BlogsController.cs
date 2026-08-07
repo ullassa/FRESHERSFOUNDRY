@@ -36,7 +36,7 @@ public class BlogsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateBlogRequest request)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -62,7 +62,7 @@ public class BlogsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(Guid id, [FromBody] CreateBlogRequest request)
     {
         var blog = await context.Blogs.FindAsync(id);
@@ -78,7 +78,7 @@ public class BlogsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = "Admin,Creator")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var blog = await context.Blogs.FindAsync(id);

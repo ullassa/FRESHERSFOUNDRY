@@ -85,14 +85,18 @@ public class AuthAndJobsTests
         var result = await controller.Create(new CreateJobRequest(
             "Senior .NET Developer",
             "FreshersFoundry",
+            string.Empty,
             "Remote",
             "FullTime",
+            string.Empty,
+            string.Empty,
             "C#, ASP.NET Core",
             "Great role for a strong backend engineer",
-            "https://example.com/apply"));
+            "https://example.com/apply",
+            null));
 
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var response = Assert.IsType<JobCreateResponse>(okResult.Value);
+        var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+        var response = Assert.IsType<JobCreateResponse>(createdResult.Value);
         Assert.Equal(adminUser.Id, response.PostedById);
         Assert.Equal(ContentStatus.Approved.ToString(), response.Status);
         Assert.Equal("Senior .NET Developer", response.Title);
@@ -100,5 +104,101 @@ public class AuthAndJobsTests
         var savedJob = await context.Jobs.SingleAsync();
         Assert.Equal(adminUser.Id, savedJob.PostedById);
         Assert.Equal(ContentStatus.Approved, savedJob.Status);
+    }
+
+    [Fact]
+    public async Task ApproveJob_WithAdminIdentity_UpdatesStatusToApproved()
+    {
+        await using var context = CreateContext();
+        var adminUser = new User
+        {
+            FullName = "Admin User",
+            Email = "admin@example.com",
+            Role = UserRole.Admin
+        };
+        context.Users.Add(adminUser);
+
+        var job = new Job
+        {
+            Title = "Junior .NET Developer",
+            CompanyName = "FreshersFoundry",
+            Location = "Remote",
+            JobType = JobType.FullTime,
+            SkillTags = "C#",
+            Description = "Entry-level backend role",
+            ApplyLink = "https://example.com/apply",
+            PostedById = adminUser.Id,
+            PostedByRole = adminUser.Role,
+            Status = ContentStatus.Pending
+        };
+        context.Jobs.Add(job);
+        await context.SaveChangesAsync();
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, adminUser.Id.ToString()),
+            new Claim(ClaimTypes.Role, UserRole.Admin.ToString())
+        }, authenticationType: "Test"));
+
+        var controller = new JobsController(context);
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.Approve(job.Id);
+
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.NotNull(okResult.Value);
+
+        var savedJob = await context.Jobs.FindAsync(job.Id);
+        Assert.NotNull(savedJob);
+        Assert.Equal(ContentStatus.Approved, savedJob!.Status);
+    }
+
+    [Fact]
+    public async Task RejectJob_WithAdminIdentity_UpdatesStatusToRejected()
+    {
+        await using var context = CreateContext();
+        var adminUser = new User
+        {
+            FullName = "Admin User",
+            Email = "admin@example.com",
+            Role = UserRole.Admin
+        };
+        context.Users.Add(adminUser);
+
+        var job = new Job
+        {
+            Title = "Junior .NET Developer",
+            CompanyName = "FreshersFoundry",
+            Location = "Remote",
+            JobType = JobType.FullTime,
+            SkillTags = "C#",
+            Description = "Entry-level backend role",
+            ApplyLink = "https://example.com/apply",
+            PostedById = adminUser.Id,
+            PostedByRole = adminUser.Role,
+            Status = ContentStatus.Pending
+        };
+        context.Jobs.Add(job);
+        await context.SaveChangesAsync();
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, adminUser.Id.ToString()),
+            new Claim(ClaimTypes.Role, UserRole.Admin.ToString())
+        }, authenticationType: "Test"));
+
+        var controller = new JobsController(context);
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.Reject(job.Id);
+
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        Assert.NotNull(okResult.Value);
+
+        var savedJob = await context.Jobs.FindAsync(job.Id);
+        Assert.NotNull(savedJob);
+        Assert.Equal(ContentStatus.Rejected, savedJob!.Status);
     }
 }

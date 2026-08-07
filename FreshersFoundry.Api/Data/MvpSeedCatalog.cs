@@ -15,8 +15,6 @@ public static class MvpSeedCatalog
 
     public static IReadOnlyList<Job> Jobs =>
     [
-        new Job { Title = "Software Engineer Intern", CompanyName = "Infosys", Location = "Pune", JobType = JobType.Internship, SkillTags = "C#,ASP.NET,SQL", Description = "6-month internship for students.", ApplyLink = "https://example.com", PostedByRole = UserRole.Admin, Status = ContentStatus.Approved },
-        new Job { Title = "Frontend Developer", CompanyName = "Wipro", Location = "Remote", JobType = JobType.Contract, SkillTags = "Angular,TypeScript,CSS", Description = "Contract role for frontend work.", ApplyLink = "https://example.com", PostedByRole = UserRole.Admin, Status = ContentStatus.Approved }
     ];
 
     public static IReadOnlyList<Blog> Blogs =>
@@ -31,9 +29,4 @@ public static class MvpSeedCatalog
         new InterviewExperience { CompanyName = "Amazon", RoleAppliedFor = "Support Associate", InterviewRounds = "Screening, HR", Difficulty = DifficultyLevel.Medium, Result = InterviewResult.Pending, Content = "Narrative with notes and round-wise feedback.", Status = ContentStatus.Pending }
     ];
 
-    public static IReadOnlyList<AdSlot> AdSlots =>
-    [
-        new AdSlot { Type = AdSlotType.Banner, Placement = AdPlacement.HomeTop, ImageUrl = "/assets/banner-1.png", TargetUrl = "https://example.com", SponsorName = "Sample Sponsor", StartDate = DateTime.UtcNow.Date, EndDate = DateTime.UtcNow.Date.AddDays(30), IsActive = true },
-        new AdSlot { Type = AdSlotType.SponsoredJob, Placement = AdPlacement.JobsListTop, ImageUrl = "/assets/banner-2.png", TargetUrl = "https://example.com", SponsorName = "Sample Employer", StartDate = DateTime.UtcNow.Date, EndDate = DateTime.UtcNow.Date.AddDays(30), IsActive = true }
-    ];
 }

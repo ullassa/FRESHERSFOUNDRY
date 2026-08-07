@@ -2,6 +2,8 @@ import { CommonModule, ViewportScroller } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AuthService } from '../../core/auth.service';
 import { CardComponent } from '../../shared/components/card.component';
 import { RouterLink } from '@angular/router';
@@ -11,11 +13,12 @@ import {
   AdminMetric,
   AdminSearchResponse
 } from './admin-dashboard.service';
+import { PostJobDialogComponent } from './post-job-dialog.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, CardComponent, RouterLink],
+  imports: [CommonModule, CardComponent, RouterLink, MatDialogModule, MatButtonModule, PostJobDialogComponent],
   template: `
     <div class="admin-shell" [class.collapsed]="sidebarCollapsed()">
       <aside class="sidebar">
@@ -52,10 +55,6 @@ import {
             <span class="nav-icon">IQ</span>
             <span *ngIf="!sidebarCollapsed()">Interview Questions</span>
           </button>
-          <button type="button" class="nav-item" (click)="scrollTo('creators')">
-            <span class="nav-icon">CR</span>
-            <span *ngIf="!sidebarCollapsed()">Creators</span>
-          </button>
           <button type="button" class="nav-item" (click)="scrollTo('users')">
             <span class="nav-icon">U</span>
             <span *ngIf="!sidebarCollapsed()">Users</span>
@@ -91,6 +90,7 @@ import {
               <button type="button" (click)="runSearch(searchInput.value)">Search</button>
             </div>
             <button class="ghost-btn" type="button" (click)="loadDashboard()">Refresh</button>
+            <button class="primary-btn" type="button" (click)="openPostJob()">+ Post New Job</button>
           </div>
         </header>
 
@@ -172,7 +172,6 @@ import {
                     <a class="action-item" routerLink="/admin/post-job">Post a job</a>
                     <a class="action-item" routerLink="/admin/post-question">Post a question</a>
                     <a class="action-item" routerLink="/admin/pending-approvals">Pending approvals</a>
-                    <a class="action-item" routerLink="/admin/ads">Ad Manager</a>
                     <button
                       type="button"
                       class="action-button"
@@ -246,10 +245,6 @@ import {
                 <span>Users</span>
                 <strong>{{ metricValue(data.metrics, 'users') }}</strong>
               </div>
-              <div class="module-row" id="creators">
-                <span>Creators</span>
-                <strong>{{ metricValue(data.metrics, 'premiumMembers') }}</strong>
-              </div>
               <div class="module-row" id="companies">
                 <span>Companies</span>
                 <strong>No Data Found</strong>
@@ -260,10 +255,6 @@ import {
               </div>
               <div class="module-row" id="webinars">
                 <span>Webinars</span>
-                <strong>No Data Found</strong>
-              </div>
-              <div class="module-row" id="advertisements">
-                <span>Advertisements</span>
                 <strong>No Data Found</strong>
               </div>
               <div class="module-row" id="premium-plans">
@@ -721,6 +712,7 @@ export class AdminDashboardComponent implements OnInit {
   private readonly service = inject(AdminDashboardService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
   private readonly scroller = inject(ViewportScroller);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -782,7 +774,17 @@ export class AdminDashboardComponent implements OnInit {
     this.auth.logout();
     this.router.navigateByUrl('/auth/login');
   }
+  openPostJob(): void {
+    const dialogRef = this.dialog.open(PostJobDialogComponent, {
+      width: '720px'
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.loadDashboard();
+      }
+    });
+  }
   displayMetric(metric: AdminMetric): string {
     return metric.value === null ? 'No Data Found' : metric.value.toLocaleString('en-IN');
   }

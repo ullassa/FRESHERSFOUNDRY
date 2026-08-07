@@ -19,8 +19,7 @@ public static class SeedData
         {
             FullName = "FreshersFoundry Admin",
             Email = "admin@freshersfoundry.local",
-            Role = UserRole.Admin,
-            CreatorStatus = CreatorStatus.Approved
+            Role = UserRole.Admin
         };
 
         admin.PasswordHash = passwordHasher.HashPassword(admin, "Admin@12345");
@@ -51,17 +50,10 @@ public static class SeedData
             return experience;
         });
 
-        var ads = MvpSeedCatalog.AdSlots.Select(adSlot =>
-        {
-            adSlot.CreatedById = admin.Id;
-            return adSlot;
-        });
-
         context.InterviewQuestions.AddRange(questions);
         context.Jobs.AddRange(jobs);
         context.Blogs.AddRange(blogs);
         context.InterviewExperiences.AddRange(experiences);
-        context.AdSlots.AddRange(ads);
         await context.SaveChangesAsync();
     }
 }
