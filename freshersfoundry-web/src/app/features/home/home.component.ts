@@ -19,10 +19,9 @@ const featuredCards = [
 ];
 
 const spotlightItems = [
-  { label: 'Google SDE Intern', value: 'OA, 2 tech rounds, HR' },
-  { label: 'SQL for beginners', value: 'Joins, indexes, and query logic' },
-  { label: 'First job checklist', value: 'Resume, projects, and aptitude prep' },
-  { label: 'Creator program', value: 'Apply, get reviewed, publish content' }
+  { label: 'Jobs', value: 'Admin-posted roles appear after approval.' },
+  { label: 'Interview experiences', value: 'Approved stories show up in the public feed.' },
+  { label: 'Interview questions', value: 'Fresh admin entries are published directly.' }
 ];
 
 @Component({
@@ -46,10 +45,10 @@ const spotlightItems = [
 
       <app-card>
         <div class="hero-panel">
-          <div class="panel-stat"><strong>20+</strong><span>question categories</span></div>
-          <div class="panel-stat"><strong>30+</strong><span>starter jobs</span></div>
-          <div class="panel-stat"><strong>5+</strong><span>sample experiences</span></div>
-          <div class="panel-stat"><strong>1</strong><span>creator approval flow</span></div>
+          <div class="panel-stat"><strong>Jobs</strong><span>Admin-posted roles and approvals</span></div>
+          <div class="panel-stat"><strong>Blogs</strong><span>Published content only</span></div>
+          <div class="panel-stat"><strong>Experiences</strong><span>Approved stories only</span></div>
+          <div class="panel-stat"><strong>Questions</strong><span>Direct admin submissions</span></div>
         </div>
       </app-card>
     </section>
@@ -106,7 +105,6 @@ const spotlightItems = [
           <a class="cta-link" routerLink="/auth/login">Login</a>
           <a class="cta-link" routerLink="/interview-experiences">Read experiences</a>
           <a class="cta-link" routerLink="/interview-questions">Practice questions</a>
-          <a class="cta-link" routerLink="/auth/apply-creator">Apply to become a creator</a>
         </div>
       </app-card>
     </section>

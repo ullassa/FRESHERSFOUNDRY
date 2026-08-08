@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
@@ -6,21 +7,21 @@ import { AuthService } from '../../core/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <main class="login-page">
       <section class="login-card">
         <div class="brand-badge">F</div>
-        <p class="eyebrow">Admin access</p>
-        <h2>Sign in to manage jobs and content</h2>
+        <p class="eyebrow">Sign in</p>
+        <h2>Access your FreshersFoundry account</h2>
         <p class="supporting-text">
-          Use your admin credentials to review applications, publish opportunities, and keep the platform current.
+          Use your account email and password to continue. Admin users will automatically see the Admin tab.
         </p>
         
         <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
           <label>
             <span>Email</span>
-            <input formControlName="email" type="email" placeholder="admin@freshersfoundry.local" />
+            <input formControlName="email" type="email" placeholder="name@example.com" />
           </label>
 
           <label>
@@ -36,7 +37,7 @@ import { AuthService } from '../../core/auth.service';
         </form>
 
         <p class="helper-text">
-          Need a regular account?
+          Need an account?
           <a routerLink="/auth/register">Create one</a>
         </p>
       </section>
@@ -186,7 +187,7 @@ export class LoginComponent {
 
     const { email, password } = this.form.getRawValue();
     this.authService.login(email, password).subscribe({
-      next: () => this.router.navigateByUrl('/admin'),
+      next: (response) => this.router.navigateByUrl(response.role === 'Admin' ? '/admin' : '/'),
       error: (error: { error?: { message?: string } }) => {
         this.errorMessage.set(error?.error?.message ?? 'Unable to sign in right now.');
         this.isSubmitting.set(false);

@@ -228,6 +228,9 @@ namespace FreshersFoundry.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CodeSnippet")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -239,6 +242,9 @@ namespace FreshersFoundry.Api.Migrations
 
                     b.Property<string>("Question")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubTopic")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -256,6 +262,9 @@ namespace FreshersFoundry.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CompanyLogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -265,6 +274,9 @@ namespace FreshersFoundry.Api.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExperienceLevel")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ExpiryDate")
@@ -282,6 +294,9 @@ namespace FreshersFoundry.Api.Migrations
 
                     b.Property<int>("PostedByRole")
                         .HasColumnType("int");
+
+                    b.Property<string>("SalaryRange")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SkillTags")
                         .IsRequired()
@@ -308,9 +323,6 @@ namespace FreshersFoundry.Api.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatorStatus")
-                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()

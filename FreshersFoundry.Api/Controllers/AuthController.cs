@@ -37,8 +37,7 @@ public class AuthController : ControllerBase
         {
             FullName = request.FullName.Trim(),
             Email = email,
-            Role = UserRole.User,
-            CreatorStatus = CreatorStatus.None
+            Role = UserRole.User
         };
 
         user.PasswordHash = passwordHasher.HashPassword(user, request.Password);
@@ -94,15 +93,4 @@ public class AuthController : ControllerBase
         return Ok(new AuthResponse(user.Id, user.FullName, user.Email, user.Role.ToString(), token));
     }
 
-    [HttpPost("apply-creator")]
-    [Authorize]
-    public IActionResult ApplyCreator() => Ok(new { message = "Creator application endpoint scaffolded." });
-
-    [HttpPut("creator-application/{userId:guid}/approve")]
-    [Authorize(Roles = "Admin")]
-    public IActionResult ApproveCreatorApplication(Guid userId) => Ok(new { userId, status = "approved" });
-
-    [HttpPut("creator-application/{userId:guid}/reject")]
-    [Authorize(Roles = "Admin")]
-    public IActionResult RejectCreatorApplication(Guid userId) => Ok(new { userId, status = "rejected" });
 }

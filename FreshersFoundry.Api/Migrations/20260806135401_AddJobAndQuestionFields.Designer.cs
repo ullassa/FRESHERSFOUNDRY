@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FreshersFoundry.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260804142311_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260806135401_AddJobAndQuestionFields")]
+    partial class AddJobAndQuestionFields
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,6 +231,9 @@ namespace FreshersFoundry.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CodeSnippet")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -242,6 +245,9 @@ namespace FreshersFoundry.Api.Migrations
 
                     b.Property<string>("Question")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubTopic")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -259,6 +265,9 @@ namespace FreshersFoundry.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CompanyLogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -268,6 +277,9 @@ namespace FreshersFoundry.Api.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExperienceLevel")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ExpiryDate")
@@ -285,6 +297,9 @@ namespace FreshersFoundry.Api.Migrations
 
                     b.Property<int>("PostedByRole")
                         .HasColumnType("int");
+
+                    b.Property<string>("SalaryRange")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SkillTags")
                         .IsRequired()
