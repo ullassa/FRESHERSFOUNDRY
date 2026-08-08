@@ -8,6 +8,7 @@ import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard.component';
 import { PostJobComponent } from './features/admin/post-job.component';
+import { PostBlogComponent } from './features/admin/post-blog.component';
 import { PostInterviewQuestionComponent } from './features/admin/post-interview-question.component';
 import { PendingApprovalsComponent } from './features/admin/pending-approvals.component';
 import { roleGuard } from './core/role.guard';
@@ -23,6 +24,7 @@ export const routes: Routes = [
   { path: 'admin', component: AdminDashboardComponent, canActivate: [roleGuard] },
   { path: 'admin/post-job', component: PostJobComponent, canActivate: [roleGuard] },
   { path: 'admin/post-job/:id', component: PostJobComponent, canActivate: [roleGuard] },
+  { path: 'admin/post-blog', component: PostBlogComponent, canActivate: [roleGuard] },
   { path: 'admin/post-question', component: PostInterviewQuestionComponent, canActivate: [roleGuard] },
   { path: 'admin/post-question/:id', component: PostInterviewQuestionComponent, canActivate: [roleGuard] },
   { path: 'admin/pending-approvals', component: PendingApprovalsComponent, canActivate: [roleGuard] },

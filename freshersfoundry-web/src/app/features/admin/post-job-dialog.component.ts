@@ -73,7 +73,7 @@ import { JobCreateRequest, JobService } from '../jobs/job.service';
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" rows="5"></textarea>
+          <textarea matInput formControlName="description" rows="4"></textarea>
           <mat-error *ngIf="description?.hasError('required')">Description is required.</mat-error>
         </mat-form-field>
 
@@ -84,12 +84,12 @@ import { JobCreateRequest, JobService } from '../jobs/job.service';
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
 
-        <div class="actions">
+        <mat-dialog-actions class="actions" align="end">
           <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting()">
             {{ isSubmitting() ? 'Publishing…' : 'Publish Job' }}
           </button>
           <button mat-button type="button" (click)="close()">Cancel</button>
-        </div>
+        </mat-dialog-actions>
       </form>
     </div>
   `,
@@ -97,6 +97,11 @@ import { JobCreateRequest, JobService } from '../jobs/job.service';
     .dialog-shell {
       width: min(680px, 100vw);
       padding: 1rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .job-form {
       display: grid;
       gap: 1rem;
     }
@@ -109,7 +114,7 @@ import { JobCreateRequest, JobService } from '../jobs/job.service';
       display: flex;
       justify-content: flex-end;
       gap: 0.75rem;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
     }
   `]
 })

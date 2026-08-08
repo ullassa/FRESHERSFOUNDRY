@@ -19,9 +19,9 @@ const featuredCards = [
 ];
 
 const spotlightItems = [
-  { label: 'Google SDE Intern', value: 'OA, 2 tech rounds, HR' },
-  { label: 'SQL for beginners', value: 'Joins, indexes, and query logic' },
-  { label: 'First job checklist', value: 'Resume, projects, and aptitude prep' }
+  { label: 'Jobs', value: 'Admin-posted roles appear after approval.' },
+  { label: 'Interview experiences', value: 'Approved stories show up in the public feed.' },
+  { label: 'Interview questions', value: 'Fresh admin entries are published directly.' }
 ];
 
 @Component({
@@ -45,10 +45,10 @@ const spotlightItems = [
 
       <app-card>
         <div class="hero-panel">
-          <div class="panel-stat"><strong>20+</strong><span>question categories</span></div>
-          <div class="panel-stat"><strong>30+</strong><span>starter jobs</span></div>
-          <div class="panel-stat"><strong>5+</strong><span>sample experiences</span></div>
-          <div class="panel-stat"><strong>1</strong><span>verified admin workflow</span></div>
+          <div class="panel-stat"><strong>Jobs</strong><span>Admin-posted roles and approvals</span></div>
+          <div class="panel-stat"><strong>Blogs</strong><span>Published content only</span></div>
+          <div class="panel-stat"><strong>Experiences</strong><span>Approved stories only</span></div>
+          <div class="panel-stat"><strong>Questions</strong><span>Direct admin submissions</span></div>
         </div>
       </app-card>
     </section>

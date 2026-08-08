@@ -23,7 +23,10 @@ public class BlogsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var items = await context.Blogs.OrderByDescending(b => b.CreatedAt).ToListAsync();
+        var items = await context.Blogs
+            .Where(blog => blog.Status == ContentStatus.Approved)
+            .OrderByDescending(blog => blog.CreatedAt)
+            .ToListAsync();
         return Ok(new { items });
     }
 

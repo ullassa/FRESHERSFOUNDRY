@@ -1,7 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { CardComponent } from '../../shared/components/card.component';
 import { AuthService } from '../../core/auth.service';
 import { environment } from '../../../environments/environment';
@@ -9,32 +14,87 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-post-job',
   standalone: true,
-  imports: [ReactiveFormsModule, CardComponent],
+  imports: [CommonModule, ReactiveFormsModule, CardComponent, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   template: `
     <app-card>
-      <h2>Post a Job</h2>
+      <div class="page-head">
+        <p class="eyebrow">Admin publishing</p>
+        <h2>Post a Job</h2>
+        <p class="supporting-text">Use a clean outline form so fields stay readable across desktop and mobile.</p>
+      </div>
 
-      <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-        <label>Title<input formControlName="title" /></label>
-        <label>Company<input formControlName="companyName" /></label>
-        <label>Location<input formControlName="location" /></label>
-        <label>Company Logo URL<input formControlName="companyLogoUrl" /></label>
-        <label>Experience Level<input formControlName="experienceLevel" /></label>
-        <label>Salary Range<input formControlName="salaryRange" /></label>
-        <label>Type
-          <select formControlName="jobType">
-            <option value="FullTime">Full-time</option>
-            <option value="Internship">Internship</option>
-            <option value="Contract">Contract</option>
-          </select>
-        </label>
-        <label>Skills<input formControlName="skillTags" placeholder="C#, SQL" /></label>
-        <label>Apply Link<input formControlName="applyLink" /></label>
-        <label>Description<textarea formControlName="description"></textarea></label>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+        <div class="two-column">
+          <mat-form-field appearance="outline">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" />
+            <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required.</mat-error>
+          </mat-form-field>
 
-        <div style="display:flex;gap:.5rem;margin-top:.5rem;">
-          <button type="submit" [disabled]="form.invalid || isSubmitting()">{{ isSubmitting() ? 'Posting…' : 'Post Job' }}</button>
-          <button type="button" (click)="cancel()">Cancel</button>
+          <mat-form-field appearance="outline">
+            <mat-label>Company</mat-label>
+            <input matInput formControlName="companyName" />
+            <mat-error *ngIf="form.get('companyName')?.hasError('required')">Company is required.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="two-column">
+          <mat-form-field appearance="outline">
+            <mat-label>Location</mat-label>
+            <input matInput formControlName="location" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Job type</mat-label>
+            <mat-select formControlName="jobType">
+              <mat-option value="FullTime">Full-time</mat-option>
+              <mat-option value="Internship">Internship</mat-option>
+              <mat-option value="Contract">Contract</mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('jobType')?.hasError('required')">Job type is required.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="two-column">
+          <mat-form-field appearance="outline">
+            <mat-label>Experience level</mat-label>
+            <input matInput formControlName="experienceLevel" placeholder="0-2 years" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Salary range</mat-label>
+            <input matInput formControlName="salaryRange" placeholder="6-10 LPA" />
+          </mat-form-field>
+        </div>
+
+        <div class="two-column">
+          <mat-form-field appearance="outline">
+            <mat-label>Company logo URL</mat-label>
+            <input matInput formControlName="companyLogoUrl" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apply link</mat-label>
+            <input matInput formControlName="applyLink" placeholder="https://..." />
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Skills</mat-label>
+          <input matInput formControlName="skillTags" placeholder="Angular, TypeScript, SQL" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="span-2">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="4"></textarea>
+          <mat-error *ngIf="form.get('description')?.hasError('required')">Description is required.</mat-error>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting()">
+            {{ isSubmitting() ? 'Posting…' : 'Post Job' }}
+          </button>
+          <button mat-button type="button" (click)="cancel()">Cancel</button>
         </div>
       </form>
     </app-card>
@@ -62,6 +122,22 @@ export class PostJobComponent {
 
   readonly isSubmitting = signal(false);
   readonly editingId = signal<string | null>(null);
+
+  get title() {
+    return this.form.get('title');
+  }
+
+  get companyName() {
+    return this.form.get('companyName');
+  }
+
+  get jobType() {
+    return this.form.get('jobType');
+  }
+
+  get description() {
+    return this.form.get('description');
+  }
 
   submit(): void {
     if (this.form.invalid) {
@@ -108,5 +184,13 @@ export class PostJobComponent {
         });
       } });
     }
+  }
+
+  private toJobType(value: unknown): 'FullTime' | 'Internship' | 'Contract' {
+    if (value === 'Internship' || value === 'Contract') {
+      return value;
+    }
+
+    return 'FullTime';
   }
 }

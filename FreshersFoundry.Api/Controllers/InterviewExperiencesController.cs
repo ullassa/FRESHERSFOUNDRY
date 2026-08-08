@@ -24,6 +24,7 @@ public class InterviewExperiencesController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var items = await context.InterviewExperiences
+            .Where(experience => experience.Status == ContentStatus.Approved)
             .OrderByDescending(i => i.CreatedAt)
             .ToListAsync();
 

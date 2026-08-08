@@ -22,14 +22,6 @@ public enum ContentStatus
     Rejected = 3
 }
 
-public enum CreatorStatus
-{
-    None = 0,
-    Pending = 1,
-    Approved = 2,
-    Rejected = 3
-}
-
 public enum DifficultyLevel
 {
     Easy = 1,

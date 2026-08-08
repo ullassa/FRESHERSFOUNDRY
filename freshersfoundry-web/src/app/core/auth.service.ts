@@ -17,6 +17,12 @@ interface AuthResponse {
   token: string;
 }
 
+interface JwtPayload {
+  role?: string;
+  Role?: string;
+  [key: string]: string | undefined;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -24,7 +30,7 @@ export class AuthService {
   readonly user = signal<AuthUser | null>(this.readStoredUser());
 
   login(email: string, password: string) {
-    return this.http.post<AuthResponse>(`${environment.apiBaseUrl}/auth/admin-login`, { email, password }).pipe(
+    return this.http.post<AuthResponse>(`${environment.apiBaseUrl}/auth/login`, { email, password }).pipe(
       tap((response: AuthResponse) => this.applySession(response))
     );
   }
@@ -47,7 +53,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.user()?.role === 'Admin';
+    return this.user()?.role === 'Admin' || this.getRoleFromToken(this.token()) === 'Admin';
   }
 
   logout(): void {
@@ -87,5 +93,29 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  private getRoleFromToken(token: string | null): string | null {
+    if (!token) {
+      return null;
+    }
+
+    const parts = token.split('.');
+    if (parts.length < 2) {
+      return null;
+    }
+
+    try {
+      const payload = JSON.parse(this.base64UrlDecode(parts[1])) as JwtPayload;
+      return payload.role ?? payload.Role ?? payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  private base64UrlDecode(value: string): string {
+    const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    return atob(padded);
   }
 }

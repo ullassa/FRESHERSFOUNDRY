@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/auth.service';
 import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
@@ -6,7 +7,7 @@ import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, AdBannerComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, AdBannerComponent],
   template: `
     <div class="shell">
       <header class="topbar">
@@ -25,7 +26,7 @@ import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
           <a routerLink="/interview-questions" routerLinkActive="active">Questions</a>
           <a *ngIf="auth.isAuthenticated() && auth.isAdmin()" routerLink="/admin" routerLinkActive="active">Admin</a>
           <button *ngIf="auth.isAuthenticated()" type="button" class="logout-btn" (click)="logout()">Logout</button>
-          <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/login" routerLinkActive="active">Admin Login</a>
+          <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/login" routerLinkActive="active">Sign In</a>
         </nav>
       </header>
 
