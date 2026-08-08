@@ -59,12 +59,12 @@ import {
         </mat-card>
 
         <mat-card class="metric-card">
-          <span class="metric-label">Pending Content</span>
-          <strong>{{ pendingContent(data.metrics) }}</strong>
+          <span class="metric-label">Pending Approvals</span>
+          <strong>{{ metricValue(data.metrics, 'pendingApprovals') }}</strong>
         </mat-card>
 
         <mat-card class="metric-card">
-          <span class="metric-label">Total Questions</span>
+          <span class="metric-label">Interview Questions</span>
           <strong>{{ metricValue(data.metrics, 'questions') }}</strong>
         </mat-card>
       </section>
@@ -342,10 +342,8 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   pendingContent(metrics: AdminMetric[]): string {
-    const pendingJobs = this.metricNumber(metrics, 'pendingJobs');
-    const pendingExperiences = this.metricNumber(metrics, 'pendingExperiences');
-    const pendingBlogs = this.metricNumber(metrics, 'pendingBlogs');
-    return (pendingJobs + pendingExperiences + pendingBlogs).toLocaleString('en-IN');
+    const pendingApprovals = this.metricNumber(metrics, 'pendingApprovals');
+    return pendingApprovals.toLocaleString('en-IN');
   }
 
   private metricNumber(metrics: AdminMetric[], key: string): number {

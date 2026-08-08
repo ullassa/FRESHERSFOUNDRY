@@ -94,7 +94,7 @@ public class JobsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateJobRequest request)
     {
         if (!ModelState.IsValid)
@@ -129,7 +129,7 @@ public class JobsController : ControllerBase
             ExpiryDate = request.ExpiryDate,
             PostedById = user.Id,
             PostedByRole = user.Role,
-            Status = ContentStatus.Approved,
+            Status = user.Role == UserRole.Admin ? ContentStatus.Approved : ContentStatus.Pending,
             CreatedAt = DateTime.UtcNow
         };
 

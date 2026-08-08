@@ -26,6 +26,7 @@ public static class SeedData
         }
 
         await PurgeNoiseAndDuplicateRecords(context);
+        await SeedStarterJobsAsync(context, admin);
 
         await context.SaveChangesAsync();
     }
@@ -70,6 +71,75 @@ public static class SeedData
         if (experiencesToRemove.Count > 0)
         {
             context.InterviewExperiences.RemoveRange(experiencesToRemove);
+        }
+    }
+
+    private static async Task SeedStarterJobsAsync(AppDbContext context, User admin)
+    {
+        var existingTitles = await context.Jobs
+            .Select(job => job.Title.ToLowerInvariant())
+            .ToListAsync();
+
+        var starterJobs = new[]
+        {
+            new Job
+            {
+                Title = "SDE-1 Backend Engineer",
+                CompanyName = "Swiggy",
+                Location = "Bengaluru, Karnataka",
+                JobType = JobType.FullTime,
+                ExperienceLevel = "0-2 years",
+                SalaryRange = "₹8,00,000 - ₹14,00,000 / yr",
+                SkillTags = "C#, ASP.NET Core, Angular, SQL",
+                Description = "Build scalable backend services and work closely with product and platform teams.",
+                ApplyLink = "https://careers.swiggy.com/jobs/sde-1-backend-engineer",
+                PostedById = admin.Id,
+                PostedByRole = admin.Role,
+                Status = ContentStatus.Approved,
+                CreatedAt = DateTime.UtcNow.AddDays(-2)
+            },
+            new Job
+            {
+                Title = "Backend Engineering Intern",
+                CompanyName = "Razorpay",
+                Location = "Remote",
+                JobType = JobType.Internship,
+                ExperienceLevel = "Students / Freshers",
+                SalaryRange = "₹40,000 - ₹60,000 / month",
+                SkillTags = "Java, Spring Boot, MySQL",
+                Description = "Contribute to APIs, integrations, and internal tooling during a summer internship.",
+                ApplyLink = "https://razorpay.com/careers/backend-engineering-intern",
+                PostedById = admin.Id,
+                PostedByRole = admin.Role,
+                Status = ContentStatus.Approved,
+                CreatedAt = DateTime.UtcNow.AddDays(-1)
+            },
+            new Job
+            {
+                Title = "UI Developer",
+                CompanyName = "Zomato",
+                Location = "Gurugram, Haryana",
+                JobType = JobType.Contract,
+                ExperienceLevel = "1-3 years",
+                SalaryRange = "₹6,00,000 - ₹10,00,000 / yr",
+                SkillTags = "Angular, TypeScript, CSS",
+                Description = "Design polished frontends, ship reusable components, and improve user experience.",
+                ApplyLink = "https://careers.zomato.com/ui-developer",
+                PostedById = admin.Id,
+                PostedByRole = admin.Role,
+                Status = ContentStatus.Approved,
+                CreatedAt = DateTime.UtcNow
+            }
+        };
+
+        foreach (var job in starterJobs)
+        {
+            var title = job.Title.ToLowerInvariant();
+            if (!existingTitles.Contains(title))
+            {
+                context.Jobs.Add(job);
+                existingTitles.Add(title);
+            }
         }
     }
 

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/interview-questions")]
 public class InterviewQuestionsController : ControllerBase
 {
     private readonly AppDbContext context;

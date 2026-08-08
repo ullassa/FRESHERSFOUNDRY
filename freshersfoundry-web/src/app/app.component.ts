@@ -2,12 +2,10 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from './core/auth.service';
-import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
-
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, AdBannerComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   template: `
     <div class="shell">
       <header class="topbar">
@@ -25,12 +23,11 @@ import { AdBannerComponent } from './shared/ad-banner/ad-banner.component';
           <a routerLink="/interview-experiences" routerLinkActive="active">Experiences</a>
           <a routerLink="/interview-questions" routerLinkActive="active">Questions</a>
           <a *ngIf="auth.isAuthenticated() && auth.isAdmin()" routerLink="/admin" routerLinkActive="active">Admin</a>
+          <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/login" routerLinkActive="active">Login</a>
+          <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/register" routerLinkActive="active">Register</a>
           <button *ngIf="auth.isAuthenticated()" type="button" class="logout-btn" (click)="logout()">Logout</button>
-          <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/login" routerLinkActive="active">Sign In</a>
         </nav>
       </header>
-
-      <app-ad-banner placement="HomeTop"></app-ad-banner>
 
       <main class="page-shell">
         <router-outlet></router-outlet>

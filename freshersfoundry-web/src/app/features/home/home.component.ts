@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardComponent } from '../../shared/components/card.component';
 import { TagChipComponent } from '../../shared/components/tag-chip.component';
+import { JobService } from '../jobs/job.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 const featuredCards = [
   {
@@ -27,7 +31,7 @@ const spotlightItems = [
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, CardComponent, TagChipComponent],
+  imports: [CommonModule, RouterLink, CardComponent, TagChipComponent],
   template: `
     <section class="hero-grid">
       <div class="hero-copy">
@@ -56,21 +60,17 @@ const spotlightItems = [
     <section class="section-block">
       <div class="section-head">
         <div>
-          <app-tag-chip label="Why FreshersFoundry works"></app-tag-chip>
-          <h2>Built for the exact problems freshers face.</h2>
+          <app-tag-chip label="Live opportunities"></app-tag-chip>
+          <h2>Fresh roles and curated prep content.</h2>
         </div>
-        <p>
-          The home page should immediately show what the platform does, who it is for, and where users should go next.
-        </p>
+        <p>Browse approved jobs, recent interview questions, and experience stories without leaving the homepage.</p>
       </div>
 
       <div class="feature-grid">
-        @for (card of featuredCards; track card.title) {
-          <app-card>
-            <h3>{{ card.title }}</h3>
-            <p>{{ card.text }}</p>
-          </app-card>
-        }
+        <app-card *ngFor="let card of featuredCards; trackBy: trackCard">
+          <h3>{{ card.title }}</h3>
+          <p>{{ card.text }}</p>
+        </app-card>
       </div>
     </section>
 
@@ -78,33 +78,31 @@ const spotlightItems = [
       <app-card>
         <div class="section-head compact">
           <div>
-            <app-tag-chip label="Spotlight"></app-tag-chip>
-            <h2>What users see first.</h2>
+            <app-tag-chip label="Jobs"></app-tag-chip>
+            <h2>Latest openings</h2>
           </div>
         </div>
 
         <div class="spotlight-list">
-          @for (item of spotlightItems; track item.label) {
-            <div class="spotlight-item">
-              <strong>{{ item.label }}</strong>
-              <span>{{ item.value }}</span>
-            </div>
-          }
+          <a class="spotlight-item" *ngFor="let job of jobs(); trackBy: trackJob" [routerLink]="'/jobs'">
+            <strong>{{ job.title }}</strong>
+            <span>{{ job.companyName }}</span>
+          </a>
         </div>
       </app-card>
 
       <app-card>
         <div class="section-head compact">
           <div>
-            <app-tag-chip label="Next steps"></app-tag-chip>
-            <h2>Start using the platform.</h2>
+            <app-tag-chip label="Questions"></app-tag-chip>
+            <h2>Popular practice topics</h2>
           </div>
         </div>
 
         <div class="cta-stack">
-          <a class="cta-link" routerLink="/auth/login">Login</a>
-          <a class="cta-link" routerLink="/interview-experiences">Read experiences</a>
-          <a class="cta-link" routerLink="/interview-questions">Practice questions</a>
+          <a class="cta-link" routerLink="/interview-questions">Practice Angular and backend questions</a>
+          <a class="cta-link" routerLink="/interview-experiences">Read fresh interview stories</a>
+          <a class="cta-link" routerLink="/auth/login">Log in to continue</a>
         </div>
       </app-card>
     </section>
@@ -292,6 +290,24 @@ const spotlightItems = [
   `]
 })
 export class HomeComponent {
+  private readonly jobService = inject(JobService);
+
   readonly featuredCards = featuredCards;
   readonly spotlightItems = spotlightItems;
+  readonly jobs = signal<any[]>([]);
+
+  ngOnInit(): void {
+    this.jobService.getApprovedJobs().subscribe({
+      next: (response) => this.jobs.set((response.items ?? []).slice(0, 4)),
+      error: () => this.jobs.set([])
+    });
+  }
+
+  trackCard(index: number, card: { title: string }): string {
+    return `${card.title}-${index}`;
+  }
+
+  trackJob(index: number, job: { id: string }): string {
+    return `${job.id}-${index}`;
+  }
 }

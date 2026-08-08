@@ -34,6 +34,87 @@ public class AuthAndJobsTests
             .Build();
 
     [Fact]
+    public async Task CreateJob_WithNonAdminIdentity_LeavesJobPending()
+    {
+        await using var context = CreateContext();
+        var user = new User
+        {
+            FullName = "Standard User",
+            Email = "user@example.com",
+            Role = UserRole.User
+        };
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, UserRole.User.ToString())
+        }, authenticationType: "Test"));
+
+        var controller = new JobsController(context);
+        controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+
+        var result = await controller.Create(new CreateJobRequest(
+            "Junior Backend Developer",
+            "FreshersFoundry",
+            string.Empty,
+            "Remote",
+            "FullTime",
+            string.Empty,
+            string.Empty,
+            "C#",
+            "Entry-level backend role",
+            "https://example.com/apply",
+            null));
+
+        var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+        var response = Assert.IsType<JobCreateResponse>(createdResult.Value);
+        Assert.Equal(ContentStatus.Pending.ToString(), response.Status);
+
+        var savedJob = await context.Jobs.SingleAsync();
+        Assert.Equal(ContentStatus.Pending, savedJob.Status);
+    }
+
+    [Fact]
+    public async Task DashboardStats_ReturnsPendingApprovalCount()
+    {
+        await using var context = CreateContext();
+        context.Jobs.Add(new Job
+        {
+            Title = "Pending Job",
+            CompanyName = "FreshersFoundry",
+            Location = "Remote",
+            JobType = JobType.FullTime,
+            SkillTags = "C#",
+            Description = "Pending job",
+            ApplyLink = "https://example.com/apply",
+            PostedById = Guid.NewGuid(),
+            PostedByRole = UserRole.User,
+            Status = ContentStatus.Pending
+        });
+        context.Users.Add(new User { FullName = "User", Email = "u@example.com", Role = UserRole.User });
+        context.InterviewQuestions.Add(new InterviewQuestion
+        {
+            Category = "C#",
+            Question = "What is async?",
+            Answer = "It is non-blocking",
+            Difficulty = DifficultyLevel.Easy,
+            CreatedById = Guid.NewGuid()
+        });
+        await context.SaveChangesAsync();
+
+        var controller = new AdminController(context);
+        var result = await controller.DashboardStats();
+
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var payload = okResult.Value;
+        Assert.NotNull(payload);
+        Assert.Contains("pendingApprovals", payload.GetType().GetProperties().Select(p => p.Name));
+    }
+
+    [Fact]
     public async Task AdminLogin_ReturnsToken_ForAdminUser()
     {
         await using var context = CreateContext();
