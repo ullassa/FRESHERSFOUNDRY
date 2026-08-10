@@ -5,7 +5,8 @@ namespace FreshersFoundry.Api.Models;
 public enum UserRole
 {
     Admin = 1,
-    User = 2
+    Creator = 2,
+    User = 3
 }
 
 public enum JobType
