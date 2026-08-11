@@ -1,0 +1,11 @@
+<app-card>
+  <h2>Interview Questions</h2>
+
+  <div *ngIf="loading()">Loading…</div>
+  <ul *ngIf="!loading()">
+    <li *ngFor="let q of items()">
+      <strong>{{ q.category }}</strong> — {{ q.question }}
+      <span *ngIf="isAdmin()"> — <a (click)="edit(q.id)">Edit</a> <a (click)="delete(q.id)">Delete</a></span>
+    </li>
+  </ul>
+</app-card>

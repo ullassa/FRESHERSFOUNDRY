@@ -11,9 +11,9 @@ namespace FreshersFoundry.Api.Controllers;
 [Authorize(Roles = "Admin")]
 public class AdminController : ControllerBase
 {
-    private readonly AppDbContext context;
+    private readonly ApplicationDbContext context;
 
-    public AdminController(AppDbContext context)
+    public AdminController(ApplicationDbContext context)
     {
         this.context = context;
     }
@@ -48,53 +48,51 @@ public class AdminController : ControllerBase
         var totalQuestions = await context.InterviewQuestions.CountAsync();
         var pendingBlogs = await context.Blogs.CountAsync(b => b.Status == ContentStatus.Pending);
 
-        var metrics = new[]
+        var metrics = new List<AdminMetricDto>
         {
-            new { key = "users", label = "Total users", value = totalUsers, todayChange = "+1%", icon = "users", sectionId = "users" },
-            new { key = "activeJobs", label = "Active jobs", value = activeJobs, todayChange = "+2%", icon = "jobs", sectionId = "jobs" },
-            new { key = "pendingJobs", label = "Pending jobs", value = pendingJobs, todayChange = "--", icon = "pending", sectionId = "jobs" },
-            new { key = "pendingExperiences", label = "Pending experiences", value = pendingExperiences, todayChange = "--", icon = "experiences", sectionId = "interview-experiences" },
-            new { key = "questions", label = "Total questions", value = totalQuestions, todayChange = "+3%", icon = "questions", sectionId = "interview-questions" },
-            new { key = "pendingBlogs", label = "Pending blogs", value = pendingBlogs, todayChange = "--", icon = "blogs", sectionId = "blogs" }
+            new AdminMetricDto("users", "Total users", (long?)totalUsers, "+1%", "users", "users"),
+            new AdminMetricDto("activeJobs", "Active jobs", (long?)activeJobs, "+2%", "jobs", "jobs"),
+            new AdminMetricDto("pendingJobs", "Pending jobs", (long?)pendingJobs, "--", "pending", "jobs"),
+            new AdminMetricDto("pendingExperiences", "Pending experiences", (long?)pendingExperiences, "--", "experiences", "interview-experiences"),
+            new AdminMetricDto("questions", "Total questions", (long?)totalQuestions, "+3%", "questions", "interview-questions"),
+            new AdminMetricDto("pendingBlogs", "Pending blogs", (long?)pendingBlogs, "--", "blogs", "blogs")
         };
 
-        var quickActions = new[]
+        var quickActions = new List<AdminQuickActionDto>
         {
-            new { label = "Post a new job", sectionId = "jobs", variant = "primary" },
-            new { label = "Review pending content", sectionId = "interview-experiences", variant = "secondary" }
+            new AdminQuickActionDto("Post a new job", "jobs", "primary"),
+            new AdminQuickActionDto("Review pending content", "interview-experiences", "secondary")
         };
 
-        var recentActivity = new[]
+        // Recent approved jobs (show latest 5)
+        var recentJobs = await context.Jobs
+            .Where(j => j.Status == ContentStatus.Approved)
+            .OrderByDescending(j => j.CreatedAt)
+            .Take(5)
+            .Select(j => new AdminActivityItemDto(j.Title, j.CompanyName, j.Status.ToString(), "jobs", j.CreatedAt))
+            .ToListAsync();
+
+        // Recent questions (latest 5)
+        var recentQuestions = await context.InterviewQuestions
+            .OrderByDescending(q => q.CreatedAt)
+            .Take(5)
+            .Select(q => new AdminActivityItemDto(
+                q.Question.Length > 120 ? q.Question.Substring(0, 117) + "..." : q.Question,
+                q.Category,
+                string.Empty,
+                "questions",
+                q.CreatedAt))
+            .ToListAsync();
+
+        var recentActivity = new List<AdminActivityGroupDto>
         {
-            new
-            {
-                key = "jobs",
-                title = "Recent job approvals",
-                items = new object[] { },
-                emptyState = "No recent job approvals yet."
-            },
-            new
-            {
-                key = "questions",
-                title = "Recent question activity",
-                items = new object[] { },
-                emptyState = "No question activity yet."
-            },
-            new
-            {
-                key = "experiences",
-                title = "Recent experience updates",
-                items = new object[] { },
-                emptyState = "No experience updates yet."
-            }
+            new AdminActivityGroupDto("jobs", "Recent job approvals", recentJobs, "No recent job approvals yet."),
+            new AdminActivityGroupDto("questions", "Recent question activity", recentQuestions, "No question activity yet."),
+            new AdminActivityGroupDto("experiences", "Recent experience updates", Array.Empty<AdminActivityItemDto>(), "No experience updates yet.")
         };
 
-        return Ok(new
-        {
-            metrics,
-            quickActions,
-            recentActivity
-        });
+        var response = new AdminDashboardResponse(metrics, quickActions, recentActivity);
+        return Ok(response);
     }
 
     [HttpGet("dashboard-stats")]

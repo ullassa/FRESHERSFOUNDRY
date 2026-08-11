@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 [Route("api/interview-questions")]
 public class InterviewQuestionsController : ControllerBase
 {
-    private readonly AppDbContext context;
+    private readonly ApplicationDbContext context;
 
-    public InterviewQuestionsController(AppDbContext context)
+    public InterviewQuestionsController(ApplicationDbContext context)
     {
         this.context = context;
     }

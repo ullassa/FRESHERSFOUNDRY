@@ -12,11 +12,11 @@ namespace FreshersFoundry.Api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly AppDbContext context;
+    private readonly ApplicationDbContext context;
     private readonly IPasswordHasher<User> passwordHasher;
     private readonly ITokenService tokenService;
 
-    public AuthController(AppDbContext context, IPasswordHasher<User> passwordHasher, ITokenService tokenService)
+    public AuthController(ApplicationDbContext context, IPasswordHasher<User> passwordHasher, ITokenService tokenService)
     {
         this.context = context;
         this.passwordHasher = passwordHasher;

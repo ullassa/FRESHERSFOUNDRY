@@ -14,96 +14,8 @@ import { environment } from '../../../environments/environment';
   selector: 'app-post-blog',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, CardComponent, MatButtonModule, MatFormFieldModule, MatInputModule],
-  template: `
-    <app-card>
-      <div class="page-head">
-        <p class="eyebrow">Admin publishing</p>
-        <h2>Post Blog</h2>
-        <p class="supporting-text">Publish a clean editorial draft with outline fields and readable spacing.</p>
-      </div>
-
-      <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
-        <div class="two-column">
-          <mat-form-field appearance="outline">
-            <mat-label>Title</mat-label>
-            <input matInput formControlName="title" />
-            <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required.</mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Cover image URL</mat-label>
-            <input matInput formControlName="coverImageUrl" placeholder="https://..." />
-          </mat-form-field>
-        </div>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Tags</mat-label>
-          <input matInput formControlName="tags" placeholder="career, interview, sql" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="span-2">
-          <mat-label>Content</mat-label>
-          <textarea matInput formControlName="content" rows="4"></textarea>
-          <mat-error *ngIf="form.get('content')?.hasError('required')">Content is required.</mat-error>
-        </mat-form-field>
-
-        <div class="actions">
-          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting()">
-            {{ isSubmitting() ? 'Publishing…' : 'Publish Blog' }}
-          </button>
-          <button mat-button type="button" (click)="cancel()">Cancel</button>
-        </div>
-      </form>
-    </app-card>
-  `,
-  styles: [`
-    .page-head {
-      display: grid;
-      gap: 0.35rem;
-      margin-bottom: 1rem;
-    }
-
-    .eyebrow {
-      color: var(--ff-cta);
-      font-size: 0.76rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      margin: 0;
-    }
-
-    .supporting-text {
-      color: var(--ff-muted);
-      margin: 0;
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .two-column {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-    }
-
-    .span-2 {
-      width: 100%;
-    }
-
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 0.75rem;
-    }
-
-    @media (max-width: 720px) {
-      .two-column {
-        grid-template-columns: 1fr;
-      }
-    }
-  `]
+  templateUrl: './post-blog.component.html',
+  styleUrls: ['./post-blog.component.css']
 })
 export class PostBlogComponent {
   private readonly fb = inject(FormBuilder);
@@ -151,5 +63,14 @@ export class PostBlogComponent {
 
   cancel(): void {
     this.router.navigateByUrl('/admin');
+  }
+
+  fillSample(): void {
+    this.form.patchValue({
+      title: 'How I prepared for my first developer interview',
+      content: `This article covers the practical steps, study plan, and hands-on projects I used to prepare for entry-level developer interviews.\n\nStart with fundamentals: data structures, algorithms, and system design basics.\n\nPractice coding problems on a schedule and build a small project to demonstrate concepts.\n\nTips: keep answers concise, explain trade-offs, and show real code samples.`,
+      coverImageUrl: 'https://images.example.com/blog/dev-interview.jpg',
+      tags: 'career,interview,preparation'
+    });
   }
 }

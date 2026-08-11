@@ -1,3 +1,5 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
 :root {
   --ff-bg: #f5faff;
   --ff-surface: #ffffff;
@@ -15,6 +17,8 @@
   color: var(--ff-text);
   background: var(--ff-bg);
 }
+
+/* (Material theme already imported above) */
 
 html, body {
   margin: 0;

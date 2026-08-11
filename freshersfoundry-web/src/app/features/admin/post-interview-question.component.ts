@@ -15,64 +15,7 @@ import { environment } from '../../../environments/environment';
   selector: 'app-post-interview-question',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, CardComponent, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
-  template: `
-    <app-card>
-      <div class="page-head">
-        <p class="eyebrow">Admin publishing</p>
-        <h2>Post Interview Question</h2>
-        <p class="supporting-text">Use clear, spaced fields so questions and answers remain readable.</p>
-      </div>
-
-      <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
-        <div class="two-column">
-          <mat-form-field appearance="outline">
-            <mat-label>Category</mat-label>
-            <input matInput formControlName="category" />
-            <mat-error *ngIf="form.get('category')?.hasError('required')">Category is required.</mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Sub-topic</mat-label>
-            <input matInput formControlName="subTopic" />
-          </mat-form-field>
-        </div>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Difficulty</mat-label>
-          <mat-select formControlName="difficulty">
-            <mat-option value="Easy">Easy</mat-option>
-            <mat-option value="Medium">Medium</mat-option>
-            <mat-option value="Hard">Hard</mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.get('difficulty')?.hasError('required')">Difficulty is required.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="span-2">
-          <mat-label>Question</mat-label>
-          <textarea matInput formControlName="question" rows="4"></textarea>
-          <mat-error *ngIf="form.get('question')?.hasError('required')">Question is required.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="span-2">
-          <mat-label>Answer</mat-label>
-          <textarea matInput formControlName="answer" rows="4"></textarea>
-          <mat-error *ngIf="form.get('answer')?.hasError('required')">Answer is required.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="span-2">
-          <mat-label>Code snippet</mat-label>
-          <textarea matInput formControlName="codeSnippet" rows="4"></textarea>
-        </mat-form-field>
-
-        <div class="actions">
-          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting()">
-            {{ isSubmitting() ? 'Posting…' : 'Post Question' }}
-          </button>
-          <button mat-button type="button" (click)="cancel()">Cancel</button>
-        </div>
-      </form>
-    </app-card>
-  `
+  templateUrl: './post-interview-question.component.html'
 })
 export class PostInterviewQuestionComponent {
   private readonly fb = inject(FormBuilder);

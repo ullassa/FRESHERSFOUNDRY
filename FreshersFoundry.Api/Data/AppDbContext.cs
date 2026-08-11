@@ -1,33 +1,13 @@
-using FreshersFoundry.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreshersFoundry.Api.Data;
 
-public class AppDbContext : DbContext
+// Compatibility shim: keep the original AppDbContext type so existing
+// migrations and references continue to work. It inherits the new
+// ApplicationDbContext implementation.
+public class AppDbContext : ApplicationDbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    public AppDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-    }
-
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Job> Jobs => Set<Job>();
-    public DbSet<Blog> Blogs => Set<Blog>();
-    public DbSet<InterviewExperience> InterviewExperiences => Set<InterviewExperience>();
-    public DbSet<InterviewQuestion> InterviewQuestions => Set<InterviewQuestion>();
-    public DbSet<Comment> Comments => Set<Comment>();
-    public DbSet<Bookmark> Bookmarks => Set<Bookmark>();
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<User>()
-            .HasIndex(user => user.Email)
-            .IsUnique();
-
-        modelBuilder.Entity<Job>().Property(job => job.SkillTags).HasMaxLength(1000);
-        modelBuilder.Entity<Blog>().Property(blog => blog.Tags).HasMaxLength(1000);
-        modelBuilder.Entity<Comment>().Property(comment => comment.ContentType).HasMaxLength(64);
-        modelBuilder.Entity<Bookmark>().Property(bookmark => bookmark.ContentType).HasMaxLength(64);
     }
 }

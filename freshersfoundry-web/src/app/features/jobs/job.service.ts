@@ -41,6 +41,10 @@ export class JobService {
     return this.http.get<{ items: JobItem[] }>(`${environment.apiBaseUrl}/jobs`);
   }
 
+  getApprovedJobsWithQuery(params: Record<string, string | string[] | undefined>) {
+    return this.http.get<{ items: JobItem[] }>(`${environment.apiBaseUrl}/jobs`, { params: params as any });
+  }
+
   postJob(payload: JobCreateRequest): Observable<JobItem> {
     return this.http.post<JobItem>(`${environment.apiBaseUrl}/jobs`, payload);
   }

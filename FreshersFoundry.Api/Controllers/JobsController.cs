@@ -11,9 +11,9 @@ namespace FreshersFoundry.Api.Controllers;
 [Route("api/[controller]")]
 public class JobsController : ControllerBase
 {
-    private readonly AppDbContext context;
+    private readonly ApplicationDbContext context;
 
-    public JobsController(AppDbContext context)
+    public JobsController(ApplicationDbContext context)
     {
         this.context = context;
     }

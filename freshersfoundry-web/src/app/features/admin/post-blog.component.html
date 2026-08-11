@@ -1,0 +1,44 @@
+<app-card>
+  <div class="page-head">
+    <p class="eyebrow">Admin publishing</p>
+    <h2>Post Blog</h2>
+    <p class="supporting-text">Publish a clean editorial draft with outline fields and readable spacing.</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+    <div class="two-column">
+      <mat-form-field appearance="fill">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title" placeholder="Write a concise, descriptive title" />
+        <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Cover image URL</mat-label>
+        <input matInput formControlName="coverImageUrl" placeholder="https://example.com/image.jpg" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Tags</mat-label>
+      <input matInput formControlName="tags" placeholder="career, interview, sql" />
+      <mat-hint>Comma-separated tags help discovery (e.g. career,sql,react)</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="span-2">
+      <mat-label>Content</mat-label>
+      <textarea matInput formControlName="content" rows="8" placeholder="Write your blog content here. Use headings and short paragraphs for readability."></textarea>
+      <mat-error *ngIf="form.get('content')?.hasError('required')">Content is required.</mat-error>
+      <mat-hint align="end">{{ form.get('content')?.value?.length || 0 }} characters</mat-hint>
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-stroked-button color="primary" type="button" (click)="fillSample()">Fill sample</button>
+      <span class="spacer"></span>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting()">
+        {{ isSubmitting() ? 'Publishing…' : 'Publish Blog' }}
+      </button>
+      <button mat-button type="button" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</app-card>

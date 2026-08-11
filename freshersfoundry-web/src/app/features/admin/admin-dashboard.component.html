@@ -1,0 +1,177 @@
+<div class="admin-page">
+  <section class="hero" *ngIf="dashboard() as data">
+    <div>
+      <p class="eyebrow">Admin control room</p>
+      <h1>Manage the MVP without the clutter</h1>
+      <p class="supporting-text">Keep jobs, blogs, interview experiences, interview questions, and users in one clean workspace.</p>
+    </div>
+
+    <div class="hero-actions banner-actions">
+      <a mat-flat-button color="primary" class="mat-button" routerLink="/admin/post-job">
+        <mat-icon>add</mat-icon>
+        Post Job
+      </a>
+      <a mat-stroked-button color="primary" class="mat-button" routerLink="/admin/post-blog">
+        <mat-icon>add</mat-icon>
+        Post Blog
+      </a>
+      <a mat-stroked-button color="primary" class="mat-button" routerLink="/admin/post-question">
+        <mat-icon>add</mat-icon>
+        Post Question
+      </a>
+    </div>
+  </section>
+
+  <section class="state-panel" *ngIf="loading()">
+    <mat-card class="loading-card">
+      <div class="skeleton-grid">
+        <div class="skeleton-card" *ngFor="let item of skeletonCards"></div>
+      </div>
+    </mat-card>
+  </section>
+
+  <section class="state-panel error-panel" *ngIf="error() as errorMessage">
+    <mat-card>
+      <strong>Unable to load dashboard.</strong>
+      <p>{{ errorMessage }}</p>
+    </mat-card>
+  </section>
+
+  <section class="metric-grid" *ngIf="dashboard() as data">
+    <mat-card class="metric-card">
+      <span class="metric-label">Total Users</span>
+      <strong>{{ metricValue(data.metrics, 'users') }}</strong>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <span class="metric-label">Active Jobs</span>
+      <strong>{{ metricValue(data.metrics, 'activeJobs') }}</strong>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <span class="metric-label">Pending Approvals</span>
+      <strong>{{ metricValue(data.metrics, 'pendingApprovals') }}</strong>
+    </mat-card>
+
+    <mat-card class="metric-card">
+      <span class="metric-label">Interview Questions</span>
+      <strong>{{ metricValue(data.metrics, 'questions') }}</strong>
+    </mat-card>
+  </section>
+
+  <mat-tab-group animationDuration="200ms" class="admin-tabs" *ngIf="dashboard() as data">
+    <mat-tab label="Jobs">
+      <div class="tab-content">
+        <div class="tab-header">
+          <h3>Live Jobs ({{ metricValue(data.metrics, 'activeJobs') }})</h3>
+          <button mat-raised-button color="primary" (click)="openPostJobModal()">+ Post New Job</button>
+        </div>
+
+        <table mat-table [dataSource]="jobsList" class="mat-elevation-z1 admin-table">
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef> Title </th>
+            <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="companyName">
+            <th mat-header-cell *matHeaderCellDef> Company </th>
+            <td mat-cell *matCellDef="let element"> {{element.companyName}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="jobType">
+            <th mat-header-cell *matHeaderCellDef> Type </th>
+            <td mat-cell *matCellDef="let element"> <span class="type-badge">{{element.jobType}}</span> </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef> Status </th>
+            <td mat-cell *matCellDef="let element">
+              <mat-chip [color]="element.status === 'Approved' ? 'accent' : 'warn'" selected>
+                {{element.status}}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button [matMenuTriggerFor]="jobMenu" (click)="selectJob(element)">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedJobColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedJobColumns;"></tr>
+        </table>
+
+        <mat-menu #jobMenu="matMenu">
+          <button mat-menu-item (click)="editJob(selectedJob?.id)">Edit</button>
+          <button mat-menu-item (click)="deleteJob(selectedJob?.id)">Delete</button>
+        </mat-menu>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Interview Questions">
+      <div class="tab-content">
+        <div class="tab-header">
+          <h3>Questions Repository</h3>
+          <button mat-raised-button color="primary" (click)="openPostQuestionModal()">+ Post Question</button>
+        </div>
+
+        <table mat-table [dataSource]="questionsList" class="mat-elevation-z1 admin-table">
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef> Title </th>
+            <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="difficulty">
+            <th mat-header-cell *matHeaderCellDef> Difficulty </th>
+            <td mat-cell *matCellDef="let element"> {{element.difficulty}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button [matMenuTriggerFor]="questionMenu" (click)="selectQuestion(element)">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedQuestionColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedQuestionColumns;"></tr>
+        </table>
+
+        <mat-menu #questionMenu="matMenu">
+          <button mat-menu-item (click)="editQuestion(selectedQuestion?.id)">Edit</button>
+          <button mat-menu-item (click)="deleteQuestion(selectedQuestion?.id)">Delete</button>
+        </mat-menu>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Blogs">
+      <div class="tab-content">
+        <div class="tab-header">
+          <h3>Blogs</h3>
+          <button mat-raised-button color="primary" (click)="openPostBlogModal()">+ Post Blog</button>
+        </div>
+        <!-- Blogs table could go here -->
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Interview Experiences">
+      <div class="tab-content">
+        <h3>Interview Experiences</h3>
+        <!-- Experiences table could go here -->
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Users">
+      <div class="tab-content">
+        <h3>Users</h3>
+        <!-- Users table could go here -->
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

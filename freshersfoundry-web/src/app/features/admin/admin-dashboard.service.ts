@@ -31,6 +31,7 @@ export interface AdminActivityGroup {
   title: string;
   items: AdminActivityItem[];
   emptyState: string;
+  sectionId?: string;
 }
 
 export interface AdminDashboardResponse {

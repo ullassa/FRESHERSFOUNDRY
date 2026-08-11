@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 [Route("api/[controller]")]
 public class InterviewExperiencesController : ControllerBase
 {
-    private readonly AppDbContext context;
+    private readonly ApplicationDbContext context;
 
-    public InterviewExperiencesController(AppDbContext context)
+    public InterviewExperiencesController(ApplicationDbContext context)
     {
         this.context = context;
     }

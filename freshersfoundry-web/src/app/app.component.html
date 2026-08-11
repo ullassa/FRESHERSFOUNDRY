@@ -1,0 +1,26 @@
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">F</span>
+      <div>
+        <div class="brand-title">FreshersFoundry</div>
+        <div class="brand-subtitle">Verified interview stories, jobs, and prep</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a routerLink="/jobs" routerLinkActive="active">Jobs</a>
+      <a routerLink="/blogs" routerLinkActive="active">Blogs</a>
+      <a routerLink="/interview-experiences" routerLinkActive="active">Experiences</a>
+      <a routerLink="/interview-questions" routerLinkActive="active">Questions</a>
+      <a *ngIf="auth.isAuthenticated() && auth.isAdmin()" routerLink="/admin" routerLinkActive="active">Admin</a>
+      <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/login" routerLinkActive="active">Login</a>
+      <a *ngIf="!auth.isAuthenticated()" routerLink="/auth/register" routerLinkActive="active">Register</a>
+      <button *ngIf="auth.isAuthenticated()" type="button" class="logout-btn" (click)="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <router-outlet></router-outlet>
+  </main>
+</div>

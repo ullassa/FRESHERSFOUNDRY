@@ -1,0 +1,100 @@
+.login-page {
+  min-height: calc(100vh - 8rem);
+  display: grid;
+  place-items: center;
+  padding: 1.25rem 0;
+}
+
+.login-card {
+  width: min(100%, 460px);
+  padding: 2rem;
+  border: 1px solid var(--ff-border);
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, #ffffff, #f7fbff);
+  box-shadow: var(--ff-shadow);
+}
+
+.brand-badge {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--ff-cta), #7dd3fc);
+  color: white;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.eyebrow {
+  margin: 0.95rem 0 0;
+  color: var(--ff-cta);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 0.45rem 0 0;
+  font-size: 1.7rem;
+  line-height: 1.2;
+  color: var(--ff-text);
+}
+
+.supporting-text {
+  margin: 0.75rem 0 0;
+  color: var(--ff-muted);
+  line-height: 1.65;
+}
+
+.auth-form {
+  display: grid;
+  gap: 0.95rem;
+  margin-top: 1.2rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  color: var(--ff-text);
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--ff-border);
+  border-radius: 0.9rem;
+  background: #f8fbff;
+  color: var(--ff-text);
+  outline: none;
+}
+
+input:focus {
+  border-color: #7dd3fc;
+  box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.2);
+}
+
+button {
+  padding: 0.95rem 1rem;
+  border: 0;
+  border-radius: 0.95rem;
+  background: linear-gradient(135deg, var(--ff-cta), #38bdf8);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 12px 24px rgba(56, 189, 248, 0.2);
+}
+
+button:hover { transform: translateY(-1px); }
+
+button:disabled { opacity: 0.7; cursor: wait; }
+
+.error { margin: 0; color: var(--ff-danger); font-size: 0.95rem; }
+
+.helper-text { margin-top: 1rem; color: var(--ff-muted); text-align: center; font-size: 0.95rem; }
+
+.helper-text a { color: var(--ff-cta); font-weight: 700; }

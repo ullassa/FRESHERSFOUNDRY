@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 [Route("api/[controller]")]
 public class BlogsController : ControllerBase
 {
-    private readonly AppDbContext context;
+    private readonly ApplicationDbContext context;
 
-    public BlogsController(AppDbContext context)
+    public BlogsController(ApplicationDbContext context)
     {
         this.context = context;
     }

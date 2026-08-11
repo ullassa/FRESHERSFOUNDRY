@@ -1,0 +1,44 @@
+<div class="jobs-container">
+  <div class="jobs-header">
+    <h2>Verified Job Opportunities</h2>
+    <p>Curated roles for freshers, students, and early-career developers.</p>
+  </div>
+
+  <div class="jobs-grid" *ngIf="!loading() && jobs().length > 0; else emptyState">
+    <mat-card class="job-card" *ngFor="let job of jobs(); trackBy: trackByJob">
+      <mat-card-header>
+        <mat-card-title>{{ job.title }}</mat-card-title>
+        <mat-card-subtitle>{{ job.companyName }} • {{ job.location }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="job-card-body">
+        <div class="badge-row chip-list">
+            <mat-chip color="primary" selected>{{ job.jobType }}</mat-chip>
+            <mat-chip *ngIf="job.experienceLevel" selected>{{ job.experienceLevel }}</mat-chip>
+            <mat-chip *ngIf="job.salaryRange" selected>{{ job.salaryRange }}</mat-chip>
+        </div>
+
+        <p class="job-description">{{ job.description }}</p>
+
+        <div class="skills-row chip-list">
+            <mat-chip *ngFor="let skill of splitTags(job.skillTags)" outlined>{{ skill }}</mat-chip>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <a mat-flat-button color="primary" [href]="job.applyLink" target="_blank" rel="noreferrer">
+          Apply Now
+          <mat-icon>open_in_new</mat-icon>
+        </a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-jobs">
+      <mat-icon>work_off</mat-icon>
+      <h3>No approved jobs currently available</h3>
+      <p>Check back soon for new opportunities!</p>
+    </div>
+  </ng-template>
+</div>

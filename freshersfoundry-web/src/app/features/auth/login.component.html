@@ -1,0 +1,33 @@
+<main class="login-page">
+  <section class="login-card">
+    <div class="brand-badge">F</div>
+    <p class="eyebrow">Sign in</p>
+    <h2>Access your FreshersFoundry account</h2>
+    <p class="supporting-text">
+      Use your account email and password to continue. Admin users will automatically see the Admin tab.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+      <label>
+        <span>Email</span>
+        <input formControlName="email" type="email" placeholder="name@example.com" />
+      </label>
+
+      <label>
+        <span>Password</span>
+        <input formControlName="password" type="password" placeholder="Enter password" />
+      </label>
+
+      <p class="error" *ngIf="errorMessage()">{{ errorMessage() }}</p>
+
+      <button type="submit" [disabled]="form.invalid || isSubmitting()">
+        {{ isSubmitting() ? 'Signing in…' : 'Sign in' }}
+      </button>
+    </form>
+
+    <p class="helper-text">
+      Need an account?
+      <a routerLink="/auth/register">Create one</a>
+    </p>
+  </section>
+</main>

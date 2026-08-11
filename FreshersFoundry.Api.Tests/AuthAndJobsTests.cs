@@ -14,13 +14,13 @@ namespace FreshersFoundry.Api.Tests;
 
 public class AuthAndJobsTests
 {
-    private static AppDbContext CreateContext()
+    private static ApplicationDbContext CreateContext()
     {
-        var options = new DbContextOptionsBuilder<AppDbContext>()
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        return new AppDbContext(options);
+        return new ApplicationDbContext(options);
     }
 
     private static IConfiguration CreateConfiguration() =>

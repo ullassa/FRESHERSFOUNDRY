@@ -1,0 +1,22 @@
+<app-card>
+  <h2>Pending Approvals</h2>
+
+  <div *ngIf="loading()">Loading…</div>
+
+  <section *ngIf="!loading()">
+    <h3>Interview Experiences ({{ pendingExperiences().length }})</h3>
+    <ul>
+      <li *ngFor="let e of pendingExperiences()">{{ e.title }} — <button (click)="approveExperience(e.id)">Approve</button></li>
+    </ul>
+
+    <h3>Blogs ({{ pendingBlogs().length }})</h3>
+    <ul>
+      <li *ngFor="let b of pendingBlogs()">{{ b.title }} — <button (click)="approveBlog(b.id)">Approve</button></li>
+    </ul>
+
+    <h3>Jobs ({{ pendingJobs().length }})</h3>
+    <ul>
+      <li *ngFor="let j of pendingJobs()">{{ j.title }} at {{ j.companyName }} — <button (click)="approveJob(j.id)">Approve</button></li>
+    </ul>
+  </section>
+</app-card>
