@@ -1,6 +1,6 @@
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -19,7 +19,7 @@ import {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatButtonModule, MatCardModule, MatTabsModule, MatIconModule, MatMenuModule, MatTableModule, MatChipsModule],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatTabsModule, MatIconModule, MatMenuModule, MatTableModule, MatChipsModule],
   template: `
     <div class="admin-page">
       <section class="hero" *ngIf="dashboard() as data">

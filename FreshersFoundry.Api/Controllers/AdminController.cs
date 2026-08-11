@@ -1,13 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace FreshersFoundry.Api.Controllers;
-
 using FreshersFoundry.Api.Data;
 using FreshersFoundry.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
+namespace FreshersFoundry.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -20,7 +17,6 @@ public class AdminController : ControllerBase
     {
         this.context = context;
     }
-
     [HttpGet("pending-content")]
     public async Task<IActionResult> PendingContent()
     {
@@ -51,14 +47,15 @@ public class AdminController : ControllerBase
         var pendingExperiences = await context.InterviewExperiences.CountAsync(e => e.Status == ContentStatus.Pending);
         var totalQuestions = await context.InterviewQuestions.CountAsync();
         var pendingBlogs = await context.Blogs.CountAsync(b => b.Status == ContentStatus.Pending);
-        var pendingApprovals = pendingJobs + pendingExperiences + pendingBlogs;
 
         var metrics = new[]
         {
             new { key = "users", label = "Total users", value = totalUsers, todayChange = "+1%", icon = "users", sectionId = "users" },
             new { key = "activeJobs", label = "Active jobs", value = activeJobs, todayChange = "+2%", icon = "jobs", sectionId = "jobs" },
-            new { key = "pendingApprovals", label = "Pending approvals", value = pendingApprovals, todayChange = "--", icon = "pending", sectionId = "pending-approvals" },
-            new { key = "questions", label = "Interview questions", value = totalQuestions, todayChange = "+3%", icon = "questions", sectionId = "interview-questions" }
+            new { key = "pendingJobs", label = "Pending jobs", value = pendingJobs, todayChange = "--", icon = "pending", sectionId = "jobs" },
+            new { key = "pendingExperiences", label = "Pending experiences", value = pendingExperiences, todayChange = "--", icon = "experiences", sectionId = "interview-experiences" },
+            new { key = "questions", label = "Total questions", value = totalQuestions, todayChange = "+3%", icon = "questions", sectionId = "interview-questions" },
+            new { key = "pendingBlogs", label = "Pending blogs", value = pendingBlogs, todayChange = "--", icon = "blogs", sectionId = "blogs" }
         };
 
         var quickActions = new[]
@@ -107,9 +104,7 @@ public class AdminController : ControllerBase
         var activeJobs = await context.Jobs.CountAsync(j => j.Status == ContentStatus.Approved);
         var pendingJobs = await context.Jobs.CountAsync(j => j.Status == ContentStatus.Pending);
         var pendingExperiences = await context.InterviewExperiences.CountAsync(e => e.Status == ContentStatus.Pending);
-        var pendingBlogs = await context.Blogs.CountAsync(b => b.Status == ContentStatus.Pending);
         var totalQuestions = await context.InterviewQuestions.CountAsync();
-        var pendingApprovals = pendingJobs + pendingExperiences + pendingBlogs;
 
         return Ok(new
         {
@@ -117,8 +112,6 @@ public class AdminController : ControllerBase
             activeJobs,
             pendingJobs,
             pendingExperiences,
-            pendingBlogs,
-            pendingApprovals,
             totalQuestions
         });
     }
