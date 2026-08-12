@@ -27,7 +27,7 @@ export class PostInterviewQuestionComponent {
   readonly form = this.fb.nonNullable.group({
     category: ['', [Validators.required]],
     subTopic: [''],
-    difficulty: ['Medium', [Validators.required]],
+    difficultyLevel: ['Medium', [Validators.required]],
     question: ['', [Validators.required]],
     answer: ['', [Validators.required]],
     codeSnippet: ['']
@@ -40,8 +40,8 @@ export class PostInterviewQuestionComponent {
     return this.form.get('category');
   }
 
-  get difficulty() {
-    return this.form.get('difficulty');
+  get difficultyLevel() {
+    return this.form.get('difficultyLevel');
   }
 
   get question() {
@@ -61,7 +61,7 @@ export class PostInterviewQuestionComponent {
           this.form.patchValue({
             category: res.category,
             subTopic: res.subTopic,
-            difficulty: res.difficultyLevel ?? res.difficulty,
+            difficultyLevel: res.difficultyLevel ?? res.difficulty,
             question: res.question,
             answer: res.answer,
             codeSnippet: res.codeSnippet
@@ -86,7 +86,10 @@ export class PostInterviewQuestionComponent {
     this.isSubmitting.set(true);
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    const payload = this.form.getRawValue();
+    const payload = {
+      ...this.form.getRawValue(),
+      difficultyLevel: this.form.get('difficultyLevel')?.value ?? 'Medium'
+    };
 
     const request$ = this.editingId() ? this.http.put(`${environment.apiBaseUrl}/interview-questions/${this.editingId()}`, payload, { headers }) : this.http.post(`${environment.apiBaseUrl}/interview-questions`, payload, { headers });
 

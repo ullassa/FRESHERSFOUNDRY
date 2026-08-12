@@ -2,8 +2,11 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home.component';
 import { JobsComponent } from './features/jobs/jobs.component';
 import { BlogsComponent } from './features/blogs/blogs.component';
+import { BlogDetailComponent } from './features/blogs/blog-detail.component';
 import { InterviewExperiencesComponent } from './features/interview-experiences/interview-experiences.component';
+import { InterviewExperienceDetailComponent } from './features/interview-experiences/experience-detail.component';
 import { InterviewQuestionsComponent } from './features/interview-questions/interview-questions.component';
+import { QuestionDetailComponent } from './features/interview-questions/question-detail.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard.component';
@@ -17,8 +20,14 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'jobs', component: JobsComponent },
   { path: 'blogs', component: BlogsComponent },
+  { path: 'blogs/:id', component: BlogDetailComponent },
   { path: 'interview-experiences', component: InterviewExperiencesComponent },
+  { path: 'interview-experiences/new', component: InterviewExperiencesComponent },
+  { path: 'interview-experiences/:id', component: InterviewExperienceDetailComponent },
   { path: 'interview-questions', component: InterviewQuestionsComponent },
+  { path: 'questions', component: InterviewQuestionsComponent },
+  { path: 'interview-questions/:id', component: QuestionDetailComponent },
+  { path: 'questions/:id', component: QuestionDetailComponent },
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [roleGuard] },

@@ -14,12 +14,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { JobDetailsDialogComponent } from './job-details-dialog.component';
 
 @Component({
   selector: 'app-jobs',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatChipsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatDialogModule, JobDetailsDialogComponent, MatFormFieldModule, MatInputModule, MatSelectModule, MatCheckboxModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatChipsModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatCheckboxModule],
   template: `
     <div class="jobs-container">
       <div class="jobs-header">
@@ -297,10 +296,12 @@ export class JobsComponent {
   }
 
   openDetails(job: JobItem): void {
-    this.dialog.open(JobDetailsDialogComponent, {
-      width: '760px',
-      data: job
-    });
+    if (job.applyLink) {
+      window.open(job.applyLink, '_blank');
+      return;
+    }
+
+    this.router.navigateByUrl('/jobs');
   }
 
   splitTags(tags: string): string[] {
