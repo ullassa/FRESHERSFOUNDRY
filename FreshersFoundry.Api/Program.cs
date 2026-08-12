@@ -40,7 +40,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", policy =>
-        policy.WithOrigins("http://localhost:4200", "http://localhost:3000")
+        policy.WithOrigins("http://localhost:4200", "http://localhost:3000", "http://localhost:51815")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });

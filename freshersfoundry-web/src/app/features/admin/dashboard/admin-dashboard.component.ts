@@ -12,13 +12,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
-import { AuthService } from '../../core/auth.service';
-import { environment } from '../../../environments/environment';
+import { AuthService } from '../../../core/auth.service';
+import { environment } from '../../../../environments/environment';
 import {
   AdminDashboardResponse,
   AdminDashboardService,
   AdminMetric
-} from './admin-dashboard.service';
+} from '../services/admin-dashboard.service';
 
 @Component({
   selector: 'app-admin-dashboard',

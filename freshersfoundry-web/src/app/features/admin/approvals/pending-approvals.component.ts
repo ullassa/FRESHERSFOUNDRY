@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { CardComponent } from '../../shared/components/card.component';
-import { environment } from '../../../environments/environment';
+import { CardComponent } from '../../../shared/components/card.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-pending-approvals',

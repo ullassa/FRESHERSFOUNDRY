@@ -131,6 +131,7 @@ export class BlogsComponent {
     }).length;
     return Math.max(1, Math.ceil(total / this.pageSize));
   });
+Math: any;
 
   ngOnInit(): void { this.load(); }
 

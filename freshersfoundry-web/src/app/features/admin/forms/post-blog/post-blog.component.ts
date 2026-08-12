@@ -6,9 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { CardComponent } from '../../shared/components/card.component';
-import { AuthService } from '../../core/auth.service';
-import { environment } from '../../../environments/environment';
+import { CardComponent } from '../../../../shared/components/card.component';
+import { AuthService } from '../../../../core/auth.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-post-blog',

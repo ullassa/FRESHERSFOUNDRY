@@ -7,9 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { CardComponent } from '../../shared/components/card.component';
-import { AuthService } from '../../core/auth.service';
-import { environment } from '../../../environments/environment';
+import { CardComponent } from '../../../../shared/components/card.component';
+import { AuthService } from '../../../../core/auth.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-post-job',

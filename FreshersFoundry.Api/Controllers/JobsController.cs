@@ -158,11 +158,46 @@ public class JobsController : ControllerBase
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult Update(Guid id) => Ok(new { id, message = "Job update endpoint scaffolded." });
+    public async Task<IActionResult> Update(Guid id, [FromBody] CreateJobRequest request)
+    {
+        var job = await context.Jobs.FindAsync(id);
+        if (job is null)
+        {
+            return NotFound(new { message = "Job not found." });
+        }
+
+        job.Title = request.Title.Trim();
+        job.CompanyName = request.CompanyName.Trim();
+        job.CompanyLogoUrl = string.IsNullOrWhiteSpace(request.CompanyLogoUrl) ? null : request.CompanyLogoUrl.Trim();
+        job.Location = request.Location.Trim();
+        job.JobType = Enum.Parse<JobType>(request.JobType, true);
+        job.ExperienceLevel = string.IsNullOrWhiteSpace(request.ExperienceLevel) ? null : request.ExperienceLevel.Trim();
+        job.SalaryRange = string.IsNullOrWhiteSpace(request.SalaryRange) ? null : request.SalaryRange.Trim();
+        job.SkillTags = request.SkillTags.Trim();
+        job.Description = request.Description.Trim();
+        job.ApplyLink = request.ApplyLink.Trim();
+        job.ExpiryDate = request.ExpiryDate;
+
+        await context.SaveChangesAsync();
+
+        return Ok(new { id });
+    }
 
     [HttpDelete("{id:guid}")]
     [Authorize(Roles = "Admin")]
-    public IActionResult Delete(Guid id) => Ok(new { id, message = "Job delete endpoint scaffolded." });
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var job = await context.Jobs.FindAsync(id);
+        if (job is null)
+        {
+            return NotFound(new { message = "Job not found." });
+        }
+
+        context.Jobs.Remove(job);
+        await context.SaveChangesAsync();
+
+        return Ok(new { id });
+    }
 
     [HttpPut("{id:guid}/approve")]
     [Authorize(Roles = "Admin")]

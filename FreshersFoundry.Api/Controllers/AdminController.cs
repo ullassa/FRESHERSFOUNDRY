@@ -69,7 +69,7 @@ public class AdminController : ControllerBase
             .Where(j => j.Status == ContentStatus.Approved)
             .OrderByDescending(j => j.CreatedAt)
             .Take(5)
-            .Select(j => new AdminActivityItemDto(j.Title, j.CompanyName, j.Status.ToString(), "jobs", j.CreatedAt))
+            .Select(j => new AdminActivityItemDto(j.Id, j.Title, j.CompanyName, j.Status.ToString(), "jobs", j.CreatedAt))
             .ToListAsync();
 
         // Recent questions (latest 5)
@@ -77,18 +77,46 @@ public class AdminController : ControllerBase
             .OrderByDescending(q => q.CreatedAt)
             .Take(5)
             .Select(q => new AdminActivityItemDto(
+                q.Id,
                 q.Question.Length > 120 ? q.Question.Substring(0, 117) + "..." : q.Question,
                 q.Category,
-                string.Empty,
+                q.Difficulty.ToString(),
                 "questions",
                 q.CreatedAt))
+            .ToListAsync();
+
+        var recentBlogs = await context.Blogs
+            .OrderByDescending(b => b.CreatedAt)
+            .Take(5)
+            .Select(b => new AdminActivityItemDto(
+                b.Id,
+                b.Title,
+                string.IsNullOrWhiteSpace(b.Tags) ? "No tags" : b.Tags,
+                b.Status.ToString(),
+                "blogs",
+                b.CreatedAt))
+            .ToListAsync();
+
+        // Recent approved experiences (show latest 5)
+        var recentExperiences = await context.InterviewExperiences
+            .Where(e => e.Status == ContentStatus.Approved)
+            .OrderByDescending(e => e.CreatedAt)
+            .Take(5)
+            .Select(e => new AdminActivityItemDto(
+                e.Id,
+                e.CompanyName,
+                e.RoleAppliedFor,
+                e.Result.ToString(),
+                "interview-experiences",
+                e.CreatedAt))
             .ToListAsync();
 
         var recentActivity = new List<AdminActivityGroupDto>
         {
             new AdminActivityGroupDto("jobs", "Recent job approvals", recentJobs, "No recent job approvals yet."),
             new AdminActivityGroupDto("questions", "Recent question activity", recentQuestions, "No question activity yet."),
-            new AdminActivityGroupDto("experiences", "Recent experience updates", Array.Empty<AdminActivityItemDto>(), "No experience updates yet.")
+            new AdminActivityGroupDto("blogs", "Recent blogs", recentBlogs, "No blogs yet."),
+            new AdminActivityGroupDto("experiences", "Recent experience updates", recentExperiences, "No experience updates yet.")
         };
 
         var response = new AdminDashboardResponse(metrics, quickActions, recentActivity);

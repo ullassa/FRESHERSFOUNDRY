@@ -9,16 +9,19 @@ import { environment } from '../../../environments/environment';
 
 const featuredCards = [
   {
-    title: 'Verified interview experiences',
-    text: 'Read detailed company-wise stories with round breakdowns, outcomes, and practical takeaways.'
+    icon: '📖',
+    title: 'Verified Interview Experiences',
+    text: 'Read detailed company-wise stories with round breakdowns, outcomes, and practical takeaways from real candidates.'
   },
   {
-    title: 'Interview questions by stack',
-    text: 'Browse Java, SQL, HR, React, Angular, and company-specific prep questions in one place.'
+    icon: '❓',
+    title: 'Interview Questions by Stack',
+    text: 'Browse Java, SQL, HR, React, Angular, and company-specific prep questions organized by difficulty level.'
   },
   {
-    title: 'Fresh graduate jobs',
-    text: 'Discover curated roles for students and freshers, including internships and full-time openings.'
+    icon: '💼',
+    title: 'Fresh Graduate Jobs',
+    text: 'Discover curated roles for students and freshers, including internships and full-time openings across India.'
   }
 ];
 
@@ -33,258 +36,381 @@ const spotlightItems = [
   standalone: true,
   imports: [CommonModule, RouterLink, CardComponent, TagChipComponent],
   template: `
-    <section class="hero-grid">
-      <div class="hero-copy">
-        <app-tag-chip label="Verified career platform"></app-tag-chip>
-        <h1>Interview experiences, questions, jobs, and blogs for freshers.</h1>
-        <p>
-          FreshersFoundry is built for Indian students and freshers who want structured prep,
-          curated opportunities, and real interview context without noise.
-        </p>
-        <div class="actions">
-          <a class="primary" routerLink="/auth/register">Get started</a>
-          <a class="secondary" routerLink="/jobs">Browse jobs</a>
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1>
+          Discover verified 
+          <span class="highlight">interview stories, jobs & prep</span>
+        </h1>
+        <p>Curated opportunities and real interview experiences for freshers across India.</p>
+        
+        <div class="search-bar">
+          <div class="search-input-group">
+            <input type="text" placeholder="Search jobs, questions, or companies" class="search-input" />
+            <button class="search-btn">Search</button>
+          </div>
+        </div>
+
+        <div class="quick-links">
+          <a routerLink="/jobs" class="quick-link">
+            <span class="icon">💼</span>
+            <span>Browse Jobs</span>
+          </a>
+          <a routerLink="/interview-experiences" class="quick-link">
+            <span class="icon">📖</span>
+            <span>Read Experiences</span>
+          </a>
+          <a routerLink="/interview-questions" class="quick-link">
+            <span class="icon">❓</span>
+            <span>Practice Questions</span>
+          </a>
+          <a routerLink="/blogs" class="quick-link">
+            <span class="icon">📝</span>
+            <span>Read Blogs</span>
+          </a>
         </div>
       </div>
-
-      <app-card>
-        <div class="hero-panel">
-          <div class="panel-stat"><strong>Jobs</strong><span>Admin-posted roles and approvals</span></div>
-          <div class="panel-stat"><strong>Blogs</strong><span>Published content only</span></div>
-          <div class="panel-stat"><strong>Experiences</strong><span>Approved stories only</span></div>
-          <div class="panel-stat"><strong>Questions</strong><span>Direct admin submissions</span></div>
-        </div>
-      </app-card>
     </section>
 
-    <section class="section-block">
-      <div class="section-head">
-        <div>
-          <app-tag-chip label="Live opportunities"></app-tag-chip>
-          <h2>Fresh roles and curated prep content.</h2>
-        </div>
-        <p>Browse approved jobs, recent interview questions, and experience stories without leaving the homepage.</p>
+    <section class="stats-section">
+      <div class="stat-card">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Active Jobs</div>
       </div>
+      <div class="stat-card">
+        <div class="stat-number">1000+</div>
+        <div class="stat-label">Interview Stories</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">2000+</div>
+        <div class="stat-label">Practice Questions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">300+</div>
+        <div class="stat-label">Expert Blogs</div>
+      </div>
+    </section>
 
+    <section class="features-section">
+      <h2>Why choose FreshersFoundry?</h2>
+      
       <div class="feature-grid">
-        <app-card *ngFor="let card of featuredCards; trackBy: trackCard">
+        <app-card *ngFor="let card of featuredCards; trackBy: trackCard" class="feature-card">
+          <div class="feature-icon">{{ card.icon }}</div>
           <h3>{{ card.title }}</h3>
           <p>{{ card.text }}</p>
         </app-card>
       </div>
     </section>
 
-    <section class="section-block two-column">
-      <app-card>
-        <div class="section-head compact">
-          <div>
-            <app-tag-chip label="Jobs"></app-tag-chip>
-            <h2>Latest openings</h2>
-          </div>
-        </div>
-
-        <div class="spotlight-list">
-          <a class="spotlight-item" *ngFor="let job of jobs(); trackBy: trackJob" [routerLink]="'/jobs'">
-            <strong>{{ job.title }}</strong>
-            <span>{{ job.companyName }}</span>
-          </a>
-        </div>
-      </app-card>
-
-      <app-card>
-        <div class="section-head compact">
-          <div>
-            <app-tag-chip label="Questions"></app-tag-chip>
-            <h2>Popular practice topics</h2>
-          </div>
-        </div>
-
-        <div class="cta-stack">
-          <a class="cta-link" routerLink="/interview-questions">Practice Angular and backend questions</a>
-          <a class="cta-link" routerLink="/interview-experiences">Read fresh interview stories</a>
-          <a class="cta-link" routerLink="/auth/login">Log in to continue</a>
-        </div>
-      </app-card>
+    <section class="cta-section">
+      <h2>Ready to start your journey?</h2>
+      <div class="cta-buttons">
+        <a routerLink="/auth/register" class="btn btn-primary">Get Started Now</a>
+        <a routerLink="/jobs" class="btn btn-secondary">Browse Opportunities</a>
+      </div>
     </section>
   `,
   styles: [`
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
-      gap: 1.5rem;
-      align-items: stretch;
+    :host {
+      display: block;
     }
 
-    .hero-copy {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    /* Hero Section */
+    .hero-section {
+      background: #f8f9fa;
+      padding: 3.5rem 2rem;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .hero-content {
+      max-width: 850px;
+      margin: 0 auto;
+      text-align: center;
     }
 
     h1 {
-      margin: 0.75rem 0 1rem;
-      font-size: clamp(2.2rem, 4vw, 4.2rem);
-      line-height: 1.02;
-      letter-spacing: -0.05em;
-      color: var(--ff-text);
-    }
-
-    p {
-      max-width: 58ch;
-      margin: 0;
-      color: var(--ff-muted);
-      font-size: 1.05rem;
-      line-height: 1.7;
-    }
-
-    .actions {
-      display: flex;
-      gap: 0.8rem;
-      margin-top: 1.4rem;
-      flex-wrap: wrap;
-    }
-
-    .primary,
-    .secondary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 3rem;
-      padding: 0.85rem 1.2rem;
-      border-radius: 0.9rem;
+      font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 700;
+      line-height: 1.25;
+      margin: 0 0 1.2rem;
+      color: #1a1a1a;
+      letter-spacing: -0.01em;
     }
 
-    .primary {
-      background: var(--ff-cta);
-      color: #fff;
-      box-shadow: 0 16px 34px rgba(225, 29, 72, 0.24);
+    h1 .highlight {
+      color: #4f46e5;
+      font-weight: 800;
     }
 
-    .secondary {
-      border: 1px solid var(--ff-border);
-      background: #fff;
-      color: var(--ff-text);
+    > p {
+      font-size: 1rem;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+      font-weight: 500;
     }
 
-    .hero-panel {
-      display: grid;
-      gap: 1rem;
+    .search-bar {
+      margin: 2.5rem 0 2rem;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .panel-stat {
-      padding: 1rem 1.1rem;
-      border-radius: 1rem;
-      background: linear-gradient(180deg, #ffffff, #f8fafc);
-      border: 1px solid var(--ff-border);
-    }
-
-    .panel-stat strong {
-      display: block;
-      font-size: 1.8rem;
-      color: var(--ff-surface-strong);
-    }
-
-    .panel-stat span {
-      color: var(--ff-muted);
-    }
-
-    .section-block {
-      margin-top: 1.5rem;
-    }
-
-    .section-head {
+    .search-input-group {
       display: flex;
-      gap: 1rem;
-      align-items: end;
-      justify-content: space-between;
-      margin-bottom: 1rem;
+      gap: 0;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 0.8rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
     }
 
-    .section-head h2 {
-      margin: 0.6rem 0 0;
-      font-size: 1.6rem;
-      letter-spacing: -0.03em;
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 0.95rem 1.2rem;
+      font-size: 1rem;
+      background: transparent;
+      color: #1a1a1a;
     }
 
-    .section-head p {
-      max-width: 42ch;
-      text-align: right;
+    .search-input::placeholder {
+      color: #999;
     }
 
-    .compact {
-      margin-bottom: 0.9rem;
+    .search-btn {
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      padding: 0.95rem 2rem;
+      border-radius: 0;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .search-btn:hover {
+      background: #3f3ad8;
+    }
+
+    .quick-links {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .quick-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.7rem;
+      background: #fff;
+      border: 1px solid #ddd;
+      text-decoration: none;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .quick-link:hover {
+      background: #f0f0f0;
+      border-color: #4f46e5;
+      color: #4f46e5;
+    }
+
+    .quick-link .icon {
+      font-size: 1.1rem;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      padding: 3rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 1.8rem 1rem;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 0.8rem;
+      transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+      border-color: #4f46e5;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #4f46e5;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 3.5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .features-section > h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 0 0 2.5rem;
+      color: #1a1a1a;
     }
 
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
     }
 
-    .feature-grid h3 {
-      margin: 0 0 0.55rem;
-      font-size: 1.08rem;
+    .feature-card {
+      padding: 2rem !important;
+      transition: all 0.2s ease;
+      text-align: center;
+      background: #fff !important;
+      border: 1px solid #e8e8e8 !important;
     }
 
-    .feature-grid p {
-      margin: 0;
+    .feature-card:hover {
+      border-color: #4f46e5 !important;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.1) !important;
     }
 
-    .two-column {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
+    .feature-icon {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
     }
 
-    .spotlight-list,
-    .cta-stack {
-      display: grid;
-      gap: 0.85rem;
-    }
-
-    .spotlight-item,
-    .cta-link {
-      padding: 0.95rem 1rem;
-      border-radius: 0.95rem;
-      border: 1px solid var(--ff-border);
-      background: linear-gradient(180deg, #ffffff, #f8fafc);
-    }
-
-    .spotlight-item {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .spotlight-item span {
-      color: var(--ff-muted);
-      text-align: right;
-    }
-
-    .cta-link {
-      color: var(--ff-text);
+    .feature-card h3 {
+      margin: 0 0 1rem;
+      font-size: 1.15rem;
       font-weight: 700;
+      color: #1a1a1a;
     }
 
-    @media (max-width: 900px) {
-      .hero-grid,
-      .feature-grid,
-      .two-column {
-        grid-template-columns: 1fr;
+    .feature-card p {
+      margin: 0;
+      color: #666;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: #f8f9fa;
+      padding: 3.5rem 2rem;
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 1.8rem;
+      color: #1a1a1a;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .btn {
+      padding: 0.9rem 2rem;
+      border-radius: 0.7rem;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #4f46e5;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: #3f3ad8;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #4f46e5;
+      border: 1.5px solid #4f46e5;
+    }
+
+    .btn-secondary:hover {
+      background: #f0f0f0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 2.5rem 1.5rem;
       }
 
-      .section-head {
-        align-items: flex-start;
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .search-input-group {
         flex-direction: column;
       }
 
-      .section-head p {
-        text-align: left;
+      .search-btn {
+        border-radius: 0.8rem;
       }
 
-      .spotlight-item {
+      .quick-links {
+        gap: 0.8rem;
+      }
+
+      .quick-link {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .cta-buttons {
         flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
       }
     }
   `]

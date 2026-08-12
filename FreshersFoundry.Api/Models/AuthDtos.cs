@@ -9,3 +9,4 @@ public sealed record JobCreateResponse(Guid Id, string Title, string CompanyName
 public sealed record CreateInterviewQuestionRequest(string Category, string? SubTopic, string Question, string Answer, string DifficultyLevel, string? CodeSnippet);
 public sealed record InterviewQuestionResponse(Guid Id, string Category, string? SubTopic, string Question, string Answer, string DifficultyLevel, string? CodeSnippet, Guid CreatedById, DateTime CreatedAt);
 public sealed record CreateBlogRequest(string Title, string Content, string? CoverImageUrl, string? Tags);
+public sealed record CreateInterviewExperienceRequest(string CompanyName, string RoleAppliedFor, string InterviewRounds, string Difficulty, string Result, string Content, bool IsAnonymous);

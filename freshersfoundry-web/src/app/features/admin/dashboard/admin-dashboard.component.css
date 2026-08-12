@@ -1,12 +1,14 @@
 :host { display: block; }
 h1, h2, p { margin: 0; }
 .admin-page { display: flex; flex-direction: column; gap: 1rem; }
-.hero { display: flex; justify-content: space-between; gap: 1rem; align-items: end; padding: 1.25rem; border: 1px solid var(--ff-border); border-radius: 1.5rem; background: rgba(255,255,255,0.88); box-shadow: var(--ff-shadow); backdrop-filter: blur(12px); }
+.hero { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: end; padding: 1.25rem; border: 1px solid var(--ff-border); border-radius: 1.5rem; background: rgba(255,255,255,0.88); box-shadow: var(--ff-shadow); backdrop-filter: blur(12px); }
+.hero > div:first-child { flex: 1 1 28rem; min-width: 0; }
 .eyebrow { color: var(--ff-cta); font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; }
 h1 { font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.05; letter-spacing: -0.05em; }
 .supporting-text { color: var(--ff-muted); line-height: 1.65; max-width: 54rem; margin-top: 0.65rem; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: end; }
-.banner-actions { display:flex; gap:12px; align-items:center; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: end; align-items: center; }
+.banner-actions { display:flex; gap:12px; align-items:center; justify-content: flex-end; }
+.banner-actions a { white-space: nowrap; }
 .state-panel, .metric-grid, .management-grid { display: grid; gap: 1rem; }
 .metric-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
 .metric-card { display: grid; gap: 0.35rem; min-height:7rem; }

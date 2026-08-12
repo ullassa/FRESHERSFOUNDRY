@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/interview-experiences")]
 public class InterviewExperiencesController : ControllerBase
 {
     private readonly ApplicationDbContext context;
@@ -41,7 +41,7 @@ public class InterviewExperiencesController : ControllerBase
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Create([FromBody] InterviewExperience request)
+    public async Task<IActionResult> Create([FromBody] CreateInterviewExperienceRequest request)
     {
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrWhiteSpace(userId)) return Unauthorized();
@@ -49,30 +49,40 @@ public class InterviewExperiencesController : ControllerBase
         var user = await context.Users.FindAsync(Guid.Parse(userId));
         if (user is null) return Unauthorized();
 
-        request.Id = Guid.NewGuid();
-        request.SubmittedById = user.Id;
-        request.CreatedAt = DateTime.UtcNow;
-        request.Status = user.Role == UserRole.Admin ? ContentStatus.Approved : ContentStatus.Pending;
+        var experience = new InterviewExperience
+        {
+            Id = Guid.NewGuid(),
+            CompanyName = request.CompanyName.Trim(),
+            RoleAppliedFor = request.RoleAppliedFor.Trim(),
+            InterviewRounds = request.InterviewRounds.Trim(),
+            Difficulty = Enum.Parse<DifficultyLevel>(request.Difficulty, true),
+            Result = Enum.Parse<InterviewResult>(request.Result, true),
+            Content = request.Content.Trim(),
+            IsAnonymous = request.IsAnonymous,
+            SubmittedById = user.Id,
+            CreatedAt = DateTime.UtcNow,
+            Status = user.Role == UserRole.Admin ? ContentStatus.Approved : ContentStatus.Pending
+        };
 
-        context.InterviewExperiences.Add(request);
+        context.InterviewExperiences.Add(experience);
         await context.SaveChangesAsync();
 
-        return Ok(request);
+        return Ok(experience);
     }
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] InterviewExperience update)
+    public async Task<IActionResult> Update(Guid id, [FromBody] CreateInterviewExperienceRequest update)
     {
         var item = await context.InterviewExperiences.FindAsync(id);
         if (item is null) return NotFound();
 
-        item.CompanyName = update.CompanyName;
-        item.RoleAppliedFor = update.RoleAppliedFor;
-        item.InterviewRounds = update.InterviewRounds;
-        item.Difficulty = update.Difficulty;
-        item.Result = update.Result;
-        item.Content = update.Content;
+        item.CompanyName = update.CompanyName.Trim();
+        item.RoleAppliedFor = update.RoleAppliedFor.Trim();
+        item.InterviewRounds = update.InterviewRounds.Trim();
+        item.Difficulty = Enum.Parse<DifficultyLevel>(update.Difficulty, true);
+        item.Result = Enum.Parse<InterviewResult>(update.Result, true);
+        item.Content = update.Content.Trim();
         item.IsAnonymous = update.IsAnonymous;
 
         await context.SaveChangesAsync();

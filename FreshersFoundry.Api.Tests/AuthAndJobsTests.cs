@@ -115,6 +115,36 @@ public class AuthAndJobsTests
     }
 
     [Fact]
+    public async Task Dashboard_ContainsRecentInterviewExperiences()
+    {
+        await using var context = CreateContext();
+        var user = new User { FullName = "User", Email = "u@example.com", Role = UserRole.User };
+        context.Users.Add(user);
+        context.InterviewExperiences.Add(new InterviewExperience
+        {
+            CompanyName = "Microsoft",
+            RoleAppliedFor = "Software Engineer",
+            InterviewRounds = "3 rounds",
+            Difficulty = DifficultyLevel.Medium,
+            Result = InterviewResult.Selected,
+            Content = "Great experience",
+            SubmittedById = user.Id,
+            Status = ContentStatus.Approved,
+            CreatedAt = DateTime.UtcNow
+        });
+        await context.SaveChangesAsync();
+
+        var controller = new AdminController(context);
+        var result = await controller.Dashboard();
+
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var response = Assert.IsType<AdminDashboardResponse>(okResult.Value);
+        var experienceGroup = Assert.Single(response.RecentActivity.Where(g => g.Key == "experiences"));
+        Assert.NotEmpty(experienceGroup.Items);
+        Assert.Equal("Microsoft", experienceGroup.Items[0].title);
+    }
+
+    [Fact]
     public async Task AdminLogin_ReturnsToken_ForAdminUser()
     {
         await using var context = CreateContext();

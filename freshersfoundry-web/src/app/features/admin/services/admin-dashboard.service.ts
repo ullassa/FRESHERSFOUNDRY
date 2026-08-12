@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 
 export interface AdminMetric {
@@ -19,6 +19,7 @@ export interface AdminQuickAction {
 }
 
 export interface AdminActivityItem {
+  id: string;
   title: string;
   subtitle: string;
   status: string;

@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { JobCreateRequest, JobService } from '../jobs/job.service';
+import { JobCreateRequest, JobService } from '../../../jobs/job.service';
 
 @Component({
   selector: 'app-post-job-dialog',
