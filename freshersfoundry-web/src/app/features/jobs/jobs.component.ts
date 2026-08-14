@@ -249,7 +249,6 @@ export class JobsComponent {
   filters: any = { q: '', location: '', experience: '', salary: '' };
   employmentTypes = [
     { key: 'FullTime', label: 'Full-Time', checked: false, count: 0 },
-    { key: 'PartTime', label: 'Part-Time', checked: false, count: 0 },
     { key: 'Internship', label: 'Internship', checked: false, count: 0 },
     { key: 'Contract', label: 'Contract', checked: false, count: 0 }
   ];
@@ -265,16 +264,20 @@ export class JobsComponent {
 
   load(): void {
     this.loading.set(true);
-    this.jobService.getApprovedJobs().subscribe({
+    this.jobService.getApprovedJobsWithQuery(this.buildApiParams()).subscribe({
       next: (res) => {
         this.allJobs = res.items || [];
-        this.filteredJobs = [...this.allJobs];
+        this.applyLocalFilters();
         this.computeFacetCounts();
-        this.filteredCount = this.filteredJobs.length;
-        this.jobs.set(this.filteredJobs);
         this.loading.set(false);
       },
-      error: () => this.loading.set(false)
+      error: () => {
+        this.allJobs = [];
+        this.filteredJobs = [];
+        this.filteredCount = 0;
+        this.jobs.set([]);
+        this.loading.set(false);
+      }
     });
   }
 
@@ -311,7 +314,23 @@ export class JobsComponent {
       .filter(Boolean);
   }
 
-  applyFilters(): void {
+  private buildApiParams(): Record<string, string | string[] | undefined> {
+    const params: Record<string, string | string[] | undefined> = {};
+    const q = (this.filters.q || '').trim();
+    if (q) {
+      params['skill'] = q;
+    }
+    if (this.filters.location) {
+      params['location'] = this.filters.location.trim();
+    }
+    const selectedTypes = this.employmentTypes.filter(t => t.checked).map(t => t.key);
+    if (selectedTypes.length === 1) {
+      params['type'] = selectedTypes[0];
+    }
+    return params;
+  }
+
+  private applyLocalFilters(): void {
     let items = [...this.allJobs];
     const q = (this.filters.q || '').toLowerCase().trim();
     if (q) {
@@ -321,24 +340,33 @@ export class JobsComponent {
       const loc = this.filters.location.toLowerCase();
       items = items.filter(j => j.location.toLowerCase().includes(loc));
     }
-    // employment type
     const selectedTypes = this.employmentTypes.filter(t => t.checked).map(t => t.key);
     if (selectedTypes.length) {
       items = items.filter(j => selectedTypes.includes(j.jobType));
     }
-    // experience
     if (this.filters.experience) {
       items = items.filter(j => (j.experienceLevel || '').toLowerCase().includes(this.filters.experience.toLowerCase()));
     }
-    // salary range simple match
     if (this.filters.salary) {
       items = items.filter(j => (j.salaryRange || '').includes(this.filters.salary.replace('+','')));
+    }
+    const selectedCategories = this.categories.filter(c => c.checked).map(c => c.key.toLowerCase());
+    if (selectedCategories.length) {
+      items = items.filter(j => selectedCategories.some(category => (j.skillTags || '').toLowerCase().includes(category)));
+    }
+    const selectedLevels = this.levels.filter(l => l.checked).map(l => l.key.toLowerCase());
+    if (selectedLevels.length) {
+      items = items.filter(j => selectedLevels.some(level => (j.experienceLevel || '').toLowerCase().includes(level)));
     }
 
     this.filteredJobs = items;
     this.filteredCount = items.length;
     this.page = 1;
     this.jobs.set(this.filteredJobs);
+  }
+
+  applyFilters(): void {
+    this.load();
   }
 
   computeFacetCounts(): void {
