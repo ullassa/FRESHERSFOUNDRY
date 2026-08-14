@@ -141,7 +141,7 @@ public class AuthAndJobsTests
         var response = Assert.IsType<AdminDashboardResponse>(okResult.Value);
         var experienceGroup = Assert.Single(response.RecentActivity.Where(g => g.Key == "experiences"));
         Assert.NotEmpty(experienceGroup.Items);
-        Assert.Equal("Microsoft", experienceGroup.Items[0].title);
+        Assert.Equal("Microsoft", experienceGroup.Items[0].Title);
     }
 
     [Fact]
@@ -215,6 +215,38 @@ public class AuthAndJobsTests
         var savedJob = await context.Jobs.SingleAsync();
         Assert.Equal(adminUser.Id, savedJob.PostedById);
         Assert.Equal(ContentStatus.Approved, savedJob.Status);
+    }
+
+    [Fact]
+    public async Task SeedData_DoesNotDeleteExistingRecords_OnStartup()
+    {
+        await using var context = CreateContext();
+        var user = new User
+        {
+            FullName = "User",
+            Email = "user@example.com",
+            Role = UserRole.User
+        };
+        context.Users.Add(user);
+        context.Jobs.Add(new Job
+        {
+            Title = "Existing Persistent Job",
+            CompanyName = "FreshersFoundry",
+            Location = "Remote",
+            JobType = JobType.FullTime,
+            SkillTags = "C#",
+            Description = "This job should remain after startup seeding",
+            ApplyLink = "https://example.com/apply",
+            PostedById = user.Id,
+            PostedByRole = user.Role,
+            Status = ContentStatus.Approved
+        });
+        await context.SaveChangesAsync();
+
+        await SeedData.SeedAsync(context);
+
+        Assert.Equal(1, await context.Jobs.CountAsync());
+        Assert.Equal("Existing Persistent Job", await context.Jobs.SingleAsync().ContinueWith(t => t.Result.Title));
     }
 
     [Fact]

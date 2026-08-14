@@ -15,6 +15,7 @@ import { PostBlogComponent } from './features/admin/forms/post-blog/post-blog.co
 import { PostInterviewQuestionComponent } from './features/admin/forms/post-question/post-interview-question.component';
 import { PendingApprovalsComponent } from './features/admin/approvals/pending-approvals.component';
 import { roleGuard } from './core/role.guard';
+import { LegalPageComponent } from './features/legal/legal-page.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -30,6 +31,9 @@ export const routes: Routes = [
   { path: 'questions/:id', component: QuestionDetailComponent },
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegisterComponent },
+  { path: 'privacy-policy', component: LegalPageComponent, data: { type: 'privacy-policy' } },
+  { path: 'terms-and-conditions', component: LegalPageComponent, data: { type: 'terms-conditions' } },
+  { path: 'cookie-policy', component: LegalPageComponent, data: { type: 'cookie-policy' } },
   { path: 'admin', component: AdminDashboardComponent, canActivate: [roleGuard] },
   { path: 'admin/post-job', component: PostJobComponent, canActivate: [roleGuard] },
   { path: 'admin/post-job/:id', component: PostJobComponent, canActivate: [roleGuard] },

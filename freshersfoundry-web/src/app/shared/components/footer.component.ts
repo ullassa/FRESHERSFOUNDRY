@@ -40,10 +40,10 @@ import { RouterLink } from '@angular/router';
           <div class="footer-section">
             <h4>Company</h4>
             <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">Contact Us</a></li>
-              <li><a href="#">Careers</a></li>
+              <li><a routerLink="/">About Us</a></li>
+              <li><a routerLink="/blogs">Blog</a></li>
+              <li><a href="mailto:support@freshersfoundry.com">Contact Us</a></li>
+              <li><a routerLink="/jobs">Careers</a></li>
             </ul>
           </div>
 
@@ -51,10 +51,10 @@ import { RouterLink } from '@angular/router';
           <div class="footer-section">
             <h4>Resources</h4>
             <ul>
-              <li><a href="#">Documentation</a></li>
-              <li><a href="#">FAQ</a></li>
-              <li><a href="#">Community</a></li>
-              <li><a href="#">Support</a></li>
+              <li><a routerLink="/interview-questions">Interview Questions</a></li>
+              <li><a routerLink="/interview-experiences">Interview Experiences</a></li>
+              <li><a routerLink="/blogs">Community</a></li>
+              <li><a href="mailto:support@freshersfoundry.com">Support</a></li>
             </ul>
           </div>
 
@@ -62,10 +62,10 @@ import { RouterLink } from '@angular/router';
           <div class="footer-section">
             <h4>Legal</h4>
             <ul>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms & Conditions</a></li>
-              <li><a href="#">Cookie Policy</a></li>
-              <li><a href="#">Disclaimer</a></li>
+              <li><a href="http://localhost:4200/privacy-policy" target="_self">Privacy Policy</a></li>
+              <li><a href="http://localhost:4200/terms-and-conditions" target="_self">Terms & Conditions</a></li>
+              <li><a href="http://localhost:4200/cookie-policy" target="_self">Cookie Policy</a></li>
+              <li><a href="http://localhost:4200/privacy-policy" target="_self">Disclaimer</a></li>
             </ul>
           </div>
         </div>

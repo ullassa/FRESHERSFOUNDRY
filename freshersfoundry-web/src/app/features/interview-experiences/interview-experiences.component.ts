@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { environment } from '../../../environments/environment';
@@ -204,9 +204,8 @@ export class InterviewExperiencesComponent {
     const mode = this.route.snapshot.paramMap.get('id');
     const isNewRoute = this.router.url.endsWith('/new');
     if (isNewRoute || mode === 'new') {
-      if (!this.auth.isAuthenticated() || !this.auth.isAdmin()) {
-        this.showForm.set(false);
-        this.error.set('Admin access is required to submit an interview experience.');
+      if (!this.auth.isAuthenticated()) {
+        this.router.navigateByUrl('/auth/login');
         return;
       }
       this.showForm.set(true);
@@ -254,8 +253,7 @@ export class InterviewExperiencesComponent {
       return;
     }
 
-    if (!this.auth.isAuthenticated() || !this.auth.isAdmin()) {
-      this.formError.set('Admin access is required to submit an interview experience.');
+    if (!this.auth.isAuthenticated()) {
       this.router.navigateByUrl('/auth/login');
       return;
     }
@@ -265,18 +263,19 @@ export class InterviewExperiencesComponent {
     this.successMessage.set('');
 
     const token = this.auth.getToken();
-    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     const payload = { ...this.form.getRawValue() };
 
-    this.http.post(`${environment.apiBaseUrl}/interview-experiences`, payload, headers ? { headers: { Authorization: `Bearer ${token}` } } : undefined).subscribe({
+    this.http.post(`${environment.apiBaseUrl}/interview-experiences`, payload, { headers }).subscribe({
       next: () => {
         this.submitting.set(false);
         this.successMessage.set('Your interview experience was submitted successfully.');
         this.cancelForm();
         this.load();
       },
-      error: () => {
+      error: (err) => {
         this.submitting.set(false);
+        console.error('Submission error:', err);
         this.formError.set('The experience could not be submitted. Please try again.');
       }
     });

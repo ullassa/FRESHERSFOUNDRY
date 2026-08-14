@@ -50,14 +50,29 @@
     </div>
 
     <div class="two-column">
-      <mat-form-field appearance="outline">
-        <mat-label>Company logo URL</mat-label>
-        <input matInput formControlName="companyLogoUrl" />
-      </mat-form-field>
+      <div class="logo-upload-section">
+        <label class="logo-label">Company Logo</label>
+        <div class="logo-upload-box">
+          <img *ngIf="logoPreview()" [src]="logoPreview()" class="logo-preview" alt="Company logo preview" />
+          <div *ngIf="!logoPreview()" class="logo-placeholder">
+            <mat-icon>image</mat-icon>
+            <span>Upload company logo</span>
+          </div>
+          <input type="file" (change)="onLogoSelected($event)" accept="image/*" style="display: none;" #logoInput />
+          <button mat-icon-button type="button" (click)="logoInput.click()" class="upload-btn" *ngIf="!logoPreview()">
+            <mat-icon>cloud_upload</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="clearLogo()" class="clear-btn" *ngIf="logoPreview()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
 
       <mat-form-field appearance="outline">
-        <mat-label>Apply link</mat-label>
-        <input matInput formControlName="applyLink" placeholder="https://..." />
+        <mat-label>Apply Link</mat-label>
+        <input matInput formControlName="applyLink" placeholder="https://company.com/apply" />
+        <mat-error *ngIf="form.get('applyLink')?.hasError('required')">Apply link is required.</mat-error>
+        <mat-error *ngIf="form.get('applyLink')?.hasError('pattern')">Use a valid URL (https://...)</mat-error>
       </mat-form-field>
     </div>
 

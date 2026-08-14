@@ -10,5 +10,6 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public UserRole Role { get; set; } = UserRole.User;
+    public ContentStatus CreatorStatus { get; set; } = ContentStatus.Pending;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

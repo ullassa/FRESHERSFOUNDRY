@@ -35,6 +35,12 @@ export class AuthService {
     );
   }
 
+  register(fullName: string, email: string, password: string) {
+    return this.http.post<AuthResponse>(`${environment.apiBaseUrl}/auth/register`, { fullName, email, password }).pipe(
+      tap((response: AuthResponse) => this.applySession(response))
+    );
+  }
+
   setToken(value: string | null): void {
     this.token.set(value);
     if (value) {

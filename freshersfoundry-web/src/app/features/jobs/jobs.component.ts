@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { JobService, JobItem } from './job.service';
+import { JobDetailsDialogComponent } from './job-details-dialog.component';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -90,34 +91,50 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
           </section>
         </aside>
 
-        <main class="jobs-grid" *ngIf="!loading() && filteredJobs.length > 0; else emptyState">
-          <mat-card class="job-card" *ngFor="let job of pagedJobs(); trackBy: trackByJob">
-          <mat-card-header>
-            <mat-card-title>{{ job.title }}</mat-card-title>
-            <mat-card-subtitle>{{ job.companyName }} • {{ job.location }}</mat-card-subtitle>
-          </mat-card-header>
-
-          <mat-card-content class="job-card-body">
-            <div class="badge-row chip-list">
-                <mat-chip color="primary" selected>{{ job.jobType }}</mat-chip>
-                <mat-chip *ngIf="job.experienceLevel" selected>{{ job.experienceLevel }}</mat-chip>
-                <mat-chip *ngIf="job.salaryRange" selected>{{ job.salaryRange }}</mat-chip>
+        <main class="jobs-list" *ngIf="!loading() && filteredJobs.length > 0; else emptyState">
+          <div class="job-card-large" *ngFor="let job of pagedJobs(); trackBy: trackByJob">
+            <!-- Company Logo -->
+            <div class="job-card-left">
+              <div class="company-badge" *ngIf="job.companyLogoUrl; else noJobLogo">
+                <img [src]="job.companyLogoUrl" [alt]="job.companyName" class="company-logo-img" />
+              </div>
+              <ng-template #noJobLogo>
+                <div class="company-badge">{{ getCompanyInitials(job.companyName) }}</div>
+              </ng-template>
             </div>
 
-            <p class="job-description">{{ job.description }}</p>
+            <!-- Job Details -->
+            <div class="job-card-content">
+              <div class="job-title-section">
+                <h4 class="job-card-title">{{ job.title }}</h4>
+                <div class="job-meta-line">
+                  <span class="job-company-name">{{ job.companyName }}</span>
+                  <span class="job-separator">·</span>
+                  <span class="job-location">{{ job.location }}</span>
+                </div>
+              </div>
 
-            <div class="skills-row chip-list">
-                <mat-chip *ngFor="let skill of splitTags(job.skillTags)" outlined>{{ skill }}</mat-chip>
+              <div class="job-tags">
+                <span class="job-type-badge" [class.fulltime]="job.jobType === 'FullTime'" [class.internship]="job.jobType === 'Internship'" [class.contract]="job.jobType === 'Contract'">
+                  {{ job.jobType === 'FullTime' ? 'Full-Time' : job.jobType === 'Internship' ? 'Internship' : 'Contract' }}
+                </span>
+                <span class="job-skill-tag" *ngIf="job.skillTags">{{ (job.skillTags | slice:0:30) }}{{ job.skillTags.length > 30 ? '...' : '' }}</span>
+                <span class="job-skill-tag" *ngIf="job.experienceLevel">{{ job.experienceLevel }}</span>
+              </div>
+
+              <div class="job-footer">
+                <span class="job-salary" *ngIf="job.salaryRange">
+                  {{ job.salaryRange }}
+                </span>
+                <span class="job-posted">Posted {{ formatDate(job.createdAt) }}</span>
+              </div>
             </div>
-          </mat-card-content>
 
-          <mat-card-actions align="end">
-            <button mat-flat-button color="primary" (click)="openDetails(job)">
-              Apply Now
-              <mat-icon>open_in_new</mat-icon>
-            </button>
-          </mat-card-actions>
-          </mat-card>
+            <!-- Action Button -->
+            <div class="job-card-action">
+              <button mat-flat-button color="primary" (click)="openDetails(job)" class="apply-btn">Apply</button>
+            </div>
+          </div>
         </main>
 
       <ng-template #emptyState>
@@ -130,78 +147,213 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
     </div>
   `,
   styles: [`
-    .jobs-shell {
+    .jobs-layout {
       display: grid;
+      grid-template-columns: 280px 1fr;
       gap: 1.5rem;
+      align-items: start;
     }
 
-    .jobs-header {
+    .filters {
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      height: fit-content;
+    }
+
+    .filter-section {
+      margin-bottom: 1rem;
+    }
+
+    .filter-section h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-top: 0.75rem;
+    }
+
+    .search-field {
+      flex: 1;
+    }
+
+    .count {
+      color: rgba(15, 23, 42, 0.5);
+      margin-left: 6px;
+    }
+
+    .jobs-list {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 1.2rem;
     }
 
-    .jobs-grid {
+    .job-card-large {
       display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: auto 1fr auto;
+      gap: 1.5rem;
+      align-items: center;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 0.8rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+      cursor: pointer;
     }
 
-    .jobs-layout { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; align-items:start }
-    .filters { padding: 1rem; background: #fff; border-radius: 8px; border:1px solid var(--ff-border) }
-    .filter-section { margin-bottom: 1rem }
-    .filter-section h4 { margin: 0 0 0.5rem 0; font-size: 0.95rem }
-    .search-row { display:flex; gap:0.5rem; align-items:center; margin-top:0.75rem }
-    .search-field { flex: 1 }
-    .count { color: rgba(15,23,42,0.5); margin-left:6px }
+    .job-card-large:hover {
+      border-color: #4f46e5;
+      box-shadow: 0 4px 16px rgba(79, 70, 229, 0.12);
+    }
 
-    .job-card {
-      border-radius: 1rem;
+    .job-card-left {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .company-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 0.6rem;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
       overflow: hidden;
-      min-height: 260px;
+    }
+
+    .company-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .job-card-content {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-      border: 1px solid var(--ff-border);
-      box-shadow: 0 8px 30px rgba(15,23,42,0.06);
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      gap: 0.8rem;
     }
 
-    .job-card:hover { transform: translateY(-6px); box-shadow: 0 18px 50px rgba(15,23,42,0.09); }
-
-    mat-card-title { color: #0f172a; font-weight: 600; }
-    mat-card-subtitle { color: rgba(15,23,42,0.6); }
-
-    .badge-row {
+    .job-title-section {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      flex-direction: column;
+      gap: 0.3rem;
     }
 
-    .skills-row {
+    .job-card-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.4;
+    }
+
+    .job-meta-line {
+      font-size: 0.9rem;
+      color: #666;
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 0.6rem;
+      align-items: center;
     }
 
-    mat-chip {
-      margin: 0.15rem;
+    .job-company-name {
+      font-weight: 600;
+      color: #4f46e5;
     }
 
-    .job-description {
-      margin: 0 0 1rem;
-      color: rgba(15, 23, 42, 0.78);
-      min-height: 3rem;
+    .job-separator {
+      color: #ddd;
     }
 
-    .skills-row {
+    .job-location {
+      color: #999;
+    }
+
+    .job-tags {
       display: flex;
+      gap: 0.6rem;
       flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+    }
+
+    .job-type-badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.4rem;
+      background: #e8e8e8;
+      color: #666;
+      display: inline-block;
+    }
+
+    .job-type-badge.fulltime {
+      background: rgba(79, 70, 229, 0.1);
+      color: #4f46e5;
+    }
+
+    .job-type-badge.internship {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+    }
+
+    .job-type-badge.contract {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+
+    .job-skill-tag {
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.4rem;
+      background: #f0f0f0;
+      color: #666;
+      display: inline-block;
+    }
+
+    .job-footer {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #999;
+      flex-wrap: wrap;
+    }
+
+    .job-salary {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .job-posted {
+      color: #999;
+    }
+
+    .job-card-action {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .apply-btn {
+      padding: 0.7rem 1.6rem !important;
+      font-weight: 700 !important;
+      font-size: 0.95rem !important;
+      white-space: nowrap;
+    }
+
+    .job-card-large:hover .apply-btn {
+      background: #3f3ad8 !important;
     }
 
     .empty-jobs {
@@ -218,17 +370,42 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
       color: rgba(56, 189, 248, 0.8);
     }
 
-    .tag {
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.06);
-      font-size: 0.8rem;
-    }
-
     .jobs-loading {
       display: flex;
       justify-content: center;
       padding: 2rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .jobs-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .job-card-large {
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .job-card-action {
+        grid-column: 2;
+        margin-top: 0.5rem;
+      }
+
+      .apply-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .job-tags {
+        gap: 0.4rem;
+      }
+
+      .job-skill-tag,
+      .job-type-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+      }
     }
   `]
 })
@@ -299,12 +476,26 @@ export class JobsComponent {
   }
 
   openDetails(job: JobItem): void {
-    if (job.applyLink) {
-      window.open(job.applyLink, '_blank');
-      return;
-    }
-
-    this.router.navigateByUrl('/jobs');
+    this.dialog.open(JobDetailsDialogComponent, {
+      data: {
+        id: job.id,
+        title: job.title,
+        companyName: job.companyName,
+        companyLogoUrl: job.companyLogoUrl,
+        location: job.location,
+        jobType: job.jobType,
+        experienceLevel: job.experienceLevel,
+        salaryRange: job.salaryRange,
+        skillTags: job.skillTags,
+        description: job.description,
+        applyLink: job.applyLink,
+        createdAt: job.createdAt
+      },
+      width: '90%',
+      maxWidth: '900px',
+      maxHeight: '90vh',
+      panelClass: 'job-details-dialog'
+    });
   }
 
   splitTags(tags: string): string[] {
@@ -312,6 +503,36 @@ export class JobsComponent {
       .split(',')
       .map((tag) => tag.trim())
       .filter(Boolean);
+  }
+
+  getCompanyInitials(companyName: string): string {
+    return companyName
+      .split(' ')
+      .slice(0, 2)
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
+  formatDate(date: string | Date): string {
+    const d = new Date(date);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (d.toDateString() === today.toDateString()) {
+      return 'today';
+    } else if (d.toDateString() === yesterday.toDateString()) {
+      return 'yesterday';
+    }
+
+    const daysAgo = Math.floor((today.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysAgo < 7) {
+      return `${daysAgo} days ago`;
+    }
+
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: d.getFullYear() !== today.getFullYear() ? 'numeric' : undefined });
   }
 
   private buildApiParams(): Record<string, string | string[] | undefined> {

@@ -131,6 +131,7 @@ public class AdminController : ControllerBase
         var pendingJobs = await context.Jobs.CountAsync(j => j.Status == ContentStatus.Pending);
         var pendingExperiences = await context.InterviewExperiences.CountAsync(e => e.Status == ContentStatus.Pending);
         var totalQuestions = await context.InterviewQuestions.CountAsync();
+        var pendingApprovals = pendingJobs + pendingExperiences;
 
         return Ok(new
         {
@@ -138,6 +139,7 @@ public class AdminController : ControllerBase
             activeJobs,
             pendingJobs,
             pendingExperiences,
+            pendingApprovals,
             totalQuestions
         });
     }

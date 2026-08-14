@@ -70,6 +70,60 @@ const spotlightItems = [
           </a>
         </div>
       </div>
+
+      <!-- Latest Jobs Section -->
+      <div class="latest-jobs-section" *ngIf="jobs().length > 0">
+        <div class="latest-jobs-container">
+          <div class="section-header">
+            <div>
+              <h3>Latest Jobs</h3>
+              <p class="section-subtitle">The {{ jobs().length }} most recent openings hiring right now</p>
+            </div>
+            <a routerLink="/jobs" class="browse-all-btn">Browse all jobs →</a>
+          </div>
+          
+          <div class="jobs-list">
+            <a *ngFor="let job of jobs()" [routerLink]="'/jobs'" class="job-card-large">
+              <!-- Company Logo Placeholder -->
+              <div class="job-card-left">
+                <div class="company-badge">{{ getCompanyInitials(job.companyName) }}</div>
+              </div>
+
+              <!-- Job Details -->
+              <div class="job-card-content">
+                <div class="job-title-section">
+                  <h4 class="job-card-title">{{ job.title }}</h4>
+                  <div class="job-meta-line">
+                    <span class="job-company-name">{{ job.companyName }}</span>
+                    <span class="job-separator">·</span>
+                    <span class="job-location">{{ job.location || 'India' }}</span>
+                  </div>
+                </div>
+
+                <div class="job-tags">
+                  <span class="job-type-badge" [class.fulltime]="job.jobType === 'FullTime'" [class.internship]="job.jobType === 'Internship'" [class.contract]="job.jobType === 'Contract'">
+                    {{ job.jobType === 'FullTime' ? 'Full-Time' : job.jobType === 'Internship' ? 'Internship' : 'Contract' }}
+                  </span>
+                  <span class="job-skill-tag" *ngIf="job.skillsRequired">{{ job.skillsRequired }}</span>
+                  <span class="job-skill-tag" *ngIf="job.category">{{ job.category }}</span>
+                </div>
+
+                <div class="job-footer">
+                  <span class="job-salary" *ngIf="job.salaryMin && job.salaryMax">
+                    ₹{{ job.salaryMin }}L - ₹{{ job.salaryMax }}L per year
+                  </span>
+                  <span class="job-posted">Posted {{ formatDate(job.createdAt) }}</span>
+                </div>
+              </div>
+
+              <!-- Action -->
+              <div class="job-card-action">
+                <div class="apply-btn">Apply</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="stats-section">
@@ -230,6 +284,259 @@ const spotlightItems = [
 
     .quick-link .icon {
       font-size: 1.1rem;
+    }
+
+    /* Latest Jobs Section */
+    .latest-jobs-section {
+      background: #fff;
+      border-top: 1px solid #e8e8e8;
+      padding: 3rem 2rem;
+    }
+
+    .latest-jobs-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-header h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0 0 0.3rem;
+      color: #1a1a1a;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .browse-all-btn {
+      padding: 0.8rem 1.5rem;
+      border: 1.5px solid #4f46e5;
+      border-radius: 0.6rem;
+      color: #4f46e5;
+      font-weight: 600;
+      text-decoration: none;
+      background: transparent;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .browse-all-btn:hover {
+      background: #f0f0ff;
+    }
+
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .job-card-large {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1.5rem;
+      align-items: center;
+      padding: 1.5rem;
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 0.8rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .job-card-large:hover {
+      border-color: #4f46e5;
+      box-shadow: 0 4px 16px rgba(79, 70, 229, 0.12);
+    }
+
+    .job-card-left {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .company-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 0.6rem;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .job-card-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .job-title-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .job-card-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      line-height: 1.4;
+    }
+
+    .job-meta-line {
+      font-size: 0.9rem;
+      color: #666;
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .job-company-name {
+      font-weight: 600;
+      color: #4f46e5;
+    }
+
+    .job-separator {
+      color: #ddd;
+    }
+
+    .job-location {
+      color: #999;
+    }
+
+    .job-tags {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .job-type-badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.4rem;
+      background: #e8e8e8;
+      color: #666;
+      display: inline-block;
+    }
+
+    .job-type-badge.fulltime {
+      background: rgba(79, 70, 229, 0.1);
+      color: #4f46e5;
+    }
+
+    .job-type-badge.internship {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+    }
+
+    .job-type-badge.contract {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+
+    .job-skill-tag {
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.4rem;
+      background: #f0f0f0;
+      color: #666;
+      display: inline-block;
+    }
+
+    .job-footer {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #999;
+      flex-wrap: wrap;
+    }
+
+    .job-salary {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .job-posted {
+      color: #999;
+    }
+
+    .job-card-action {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .apply-btn {
+      padding: 0.7rem 1.6rem;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .job-card-large:hover .apply-btn {
+      background: #3f3ad8;
+    }
+
+    @media (max-width: 768px) {
+      .section-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .browse-all-btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .job-card-large {
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .job-card-action {
+        grid-column: 2;
+        margin-top: 0.5rem;
+      }
+
+      .apply-btn {
+        width: 100%;
+      }
+
+      .job-tags {
+        gap: 0.4rem;
+      }
+
+      .job-skill-tag,
+      .job-type-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+      }
     }
 
     /* Stats Section */
@@ -442,5 +749,35 @@ export class HomeComponent {
 
   trackJob(index: number, job: { id: string }): string {
     return `${job.id}-${index}`;
+  }
+
+  getCompanyInitials(companyName: string): string {
+    return companyName
+      .split(' ')
+      .slice(0, 2)
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
+  formatDate(date: string | Date): string {
+    const d = new Date(date);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (d.toDateString() === today.toDateString()) {
+      return 'today';
+    } else if (d.toDateString() === yesterday.toDateString()) {
+      return 'yesterday';
+    }
+
+    const daysAgo = Math.floor((today.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysAgo < 7) {
+      return `${daysAgo} days ago`;
+    }
+
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: d.getFullYear() !== today.getFullYear() ? 'numeric' : undefined });
   }
 }
