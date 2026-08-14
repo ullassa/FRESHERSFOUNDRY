@@ -2,8 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardComponent } from '../../shared/components/card.component';
-import { TagChipComponent } from '../../shared/components/tag-chip.component';
 import { JobService } from '../jobs/job.service';
+import { StatsService } from '../stats/stats.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
@@ -34,7 +34,7 @@ const spotlightItems = [
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardComponent, TagChipComponent],
+  imports: [CommonModule, RouterLink, CardComponent],
   template: `
     <section class="hero-section">
       <div class="hero-content">
@@ -74,19 +74,19 @@ const spotlightItems = [
 
     <section class="stats-section">
       <div class="stat-card">
-        <div class="stat-number">500+</div>
+        <div class="stat-number">{{ stats().activeJobs }}+</div>
         <div class="stat-label">Active Jobs</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">1000+</div>
+        <div class="stat-number">{{ stats().interviewStories }}+</div>
         <div class="stat-label">Interview Stories</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">2000+</div>
+        <div class="stat-number">{{ stats().practiceQuestions }}+</div>
         <div class="stat-label">Practice Questions</div>
       </div>
       <div class="stat-card">
-        <div class="stat-number">300+</div>
+        <div class="stat-number">{{ stats().expertBlogs }}+</div>
         <div class="stat-label">Expert Blogs</div>
       </div>
     </section>
@@ -417,15 +417,22 @@ const spotlightItems = [
 })
 export class HomeComponent {
   private readonly jobService = inject(JobService);
+  private readonly statsService = inject(StatsService);
 
   readonly featuredCards = featuredCards;
   readonly spotlightItems = spotlightItems;
   readonly jobs = signal<any[]>([]);
+  readonly stats = signal({ activeJobs: 0, interviewStories: 0, practiceQuestions: 0, expertBlogs: 0 });
 
   ngOnInit(): void {
     this.jobService.getApprovedJobs().subscribe({
       next: (response) => this.jobs.set((response.items ?? []).slice(0, 4)),
       error: () => this.jobs.set([])
+    });
+
+    this.statsService.getStats().subscribe({
+      next: (response) => this.stats.set(response),
+      error: () => this.stats.set({ activeJobs: 0, interviewStories: 0, practiceQuestions: 0, expertBlogs: 0 })
     });
   }
 
