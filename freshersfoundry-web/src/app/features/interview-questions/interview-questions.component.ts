@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { environment } from '../../../environments/environment';
 
@@ -110,6 +110,7 @@ export class InterviewQuestionsComponent {
   private readonly http = inject(HttpClient);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly items = signal<any[]>([]);
   readonly loading = signal(true);
@@ -119,7 +120,7 @@ export class InterviewQuestionsComponent {
   selectedSubTopic = '';
   selectedDifficulty = '';
 
-  readonly categories = computed(() => Array.from(new Set(this.items().map((item) => item.category).filter(Boolean))));
+  readonly categories = computed(() => Array.from(new Set(this.items().map((item) => this.normalizeCategory(item.category)))));
   readonly subTopics = computed(() => Array.from(new Set(this.items().map((item) => item.subTopic).filter(Boolean))));
 
   readonly filteredQuestions = computed(() => {
@@ -127,14 +128,19 @@ export class InterviewQuestionsComponent {
     return this.items().filter((item) => {
       const haystack = `${item.category || ''} ${item.subTopic || ''} ${item.question || ''} ${item.answer || ''}`.toLowerCase();
       const matchesQuery = !query || haystack.includes(query);
-      const matchesCategory = !this.selectedCategory || item.category === this.selectedCategory;
+      const matchesCategory = !this.selectedCategory || this.normalizeCategory(item.category) === this.selectedCategory;
       const matchesSubTopic = !this.selectedSubTopic || item.subTopic === this.selectedSubTopic;
       const matchesDifficulty = !this.selectedDifficulty || (item.difficultyLevel || item.difficulty) === this.selectedDifficulty;
       return matchesQuery && matchesCategory && matchesSubTopic && matchesDifficulty;
     });
   });
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void {
+    this.route.paramMap.subscribe((params) => {
+      this.selectedCategory = (params.get('category') || '').trim();
+    });
+    this.load();
+  }
 
   load(): void {
     this.loading.set(true);
@@ -171,5 +177,10 @@ export class InterviewQuestionsComponent {
   getExcerpt(value: string): string {
     const plain = (value || '').replace(/[#>*_`\-]/g, '').replace(/\s+/g, ' ').trim();
     return plain.length > 130 ? `${plain.slice(0, 127).trim()}...` : plain;
+  }
+
+  private normalizeCategory(value: string | null | undefined): string {
+    const trimmed = (value || '').trim();
+    return trimmed.length > 0 ? trimmed : 'Uncategorized';
   }
 }

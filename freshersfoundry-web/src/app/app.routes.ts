@@ -6,6 +6,7 @@ import { BlogDetailComponent } from './features/blogs/blog-detail.component';
 import { InterviewExperiencesComponent } from './features/interview-experiences/interview-experiences.component';
 import { InterviewExperienceDetailComponent } from './features/interview-experiences/experience-detail.component';
 import { InterviewQuestionsComponent } from './features/interview-questions/interview-questions.component';
+import { InterviewQuestionsLandingComponent } from './features/interview-questions/interview-questions-landing.component';
 import { QuestionDetailComponent } from './features/interview-questions/question-detail.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
@@ -25,8 +26,10 @@ export const routes: Routes = [
   { path: 'interview-experiences', component: InterviewExperiencesComponent },
   { path: 'interview-experiences/new', component: InterviewExperiencesComponent },
   { path: 'interview-experiences/:id', component: InterviewExperienceDetailComponent },
-  { path: 'interview-questions', component: InterviewQuestionsComponent },
-  { path: 'questions', component: InterviewQuestionsComponent },
+  { path: 'interview-questions', component: InterviewQuestionsLandingComponent },
+  { path: 'questions', component: InterviewQuestionsLandingComponent },
+  { path: 'interview-questions/topic/:category', component: InterviewQuestionsComponent },
+  { path: 'questions/topic/:category', component: InterviewQuestionsComponent },
   { path: 'interview-questions/:id', component: QuestionDetailComponent },
   { path: 'questions/:id', component: QuestionDetailComponent },
   { path: 'auth/login', component: LoginComponent },
